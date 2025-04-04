@@ -1,0 +1,10 @@
+[package]
+name = "pipauto"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+axum = "0.8.3"
+hyper = "1.6.0"
+thiserror = "2.0.12"
+tokio = "1.44.1"
