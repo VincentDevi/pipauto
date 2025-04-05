@@ -1,0 +1,62 @@
+{% extends "_layout.html" %}
+
+{% block title%}
+Pipauto-clients
+{% endblock %}
+
+{% block content %}
+<h2 class= "w-full px-4 pb-6 pt-4 text-2xl text-left"> List of clients </h2>
+
+
+<div class="relative overflow-x-auto w-full h-full">
+	<table class="w-full text-sm text-left rtl:text-right ">
+		<thead class="text-xs uppercase">
+			<tr>
+				<th scope="col" class="px-6 py-3">
+					Name
+				</th>
+				<th scope="col" class="px-6 py-3">
+					Address
+				</th>
+				<th scope="col" class="px-6 py-3">
+					Phone
+				</th>
+				<th scope="col" class="px-6 py-3">
+					Email
+				</th>
+			</tr>
+		</thead>
+		<tbody>
+			{% for client in clients %}
+			<tr class="border-b ">
+				<th scope="row"
+					class="px-6 py-4 font-medium whitespace-nowrap">
+					{{client.name}}
+				</th>
+				<td class="px-6 py-4">
+					{{client.address}}
+				</td>
+				<td class="px-6 py-4">
+					{% match client.phone %}
+						{% when Some with (val) %}
+						{{val}}
+						{% when None %}
+						...
+					{% endmatch %}
+				</td>
+				<td class="px-6 py-4">
+					{% match client.email %}
+						{% when Some with (val) %}
+						{{val}}
+						{% when None %}
+						...
+					{% endmatch %}
+				</td>
+			</tr>
+			{% endfor %}
+		</tbody>
+	</table>
+</div>
+
+
+{% endblock %}

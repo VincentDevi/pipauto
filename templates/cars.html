@@ -1,0 +1,64 @@
+{% extends "_layout.html" %}
+
+{% block title%}
+Pipauto-cars
+{% endblock %}
+
+{% block content %}
+<h2> List of clients </h2>
+
+
+<div class="relative overflow-x-auto">
+	<table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+		<thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+			<tr>
+				<th scope="col" class="px-6 py-3">
+					Brand
+				</th>
+				<th scope="col" class="px-6 py-3">
+					Cc
+				</th>
+				<th scope="col" class="px-6 py-3">
+					Fuel
+				</th>
+				<th scope="col" class="px-6 py-3">
+					Model
+				</th>
+				<th scope="col" class="px-6 py-3">
+					Oil quantity
+				</th>
+				<th scope="col" class="px-6 py-3">
+					Oil type
+				</th>
+			</tr>
+		</thead>
+		<tbody>
+			{% for car in cars %}
+			<tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 border-gray-200">
+				<th scope="row"
+					class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+					{{car.brand}}
+				</th>
+				<td class="px-6 py-4">
+					{{car.cc}}
+				</td>
+				<td class="px-6 py-4">
+					{{car.fuel}}
+				</td>
+				<td class="px-6 py-4">
+					{{car.model}}
+				</td>
+				<td class="px-6 py-4">
+					{{car.oil_quantity}}
+				</td>
+				<td class="px-6 py-4">
+					{{car.oil_type}}
+				</td>
+			</tr>
+			{% endfor %}
+		</tbody>
+	</table>
+</div>
+
+
+{% endblock %}
