@@ -11,7 +11,7 @@ pub async fn handler_fetch_clients(
 ) -> Result<Json<Vec<Client>>, HandlerError> {
     let db = state.db.lock().await;
     let repository = Repository::new(&db);
-    let fdp = repository.fetch_clients().await?;
-    Ok(Json(fdp))
+    let fetched_clients = repository.fetch_clients().await?;
+    Ok(Json(fetched_clients))
 }
 
