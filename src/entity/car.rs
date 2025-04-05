@@ -1,4 +1,4 @@
-use super::{super::common::car::*, Client};
+use super::super::common::car::*;
 
 #[derive(Debug, Clone)]
 pub struct Car {
@@ -8,5 +8,4 @@ pub struct Car {
     model: Model,
     oil_quantity: OilQuantity,
     oil_type: OilType,
-    client: Client,
 }

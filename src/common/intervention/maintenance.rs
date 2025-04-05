@@ -1,21 +1,13 @@
 #[derive(Debug, Clone, Copy)]
-pub enum Maintenance {
-    Gas(MaintenanceGas),
-    Diesel(MaintenanceDiesel),
-}
-
-#[derive(Debug, Clone, Copy)]
-pub struct MaintenanceGas {
+pub struct Maintenance {
     filter_air: bool,
     filter_cabin: bool,
     filter_oil: bool,
-    spark_plug: bool,
+    type_specific_maintenance: Option<MaintenanceType>,
 }
 
 #[derive(Debug, Clone, Copy)]
-pub struct MaintenanceDiesel {
-    filter_air: bool,
-    filter_cabin: bool,
-    filter_oil: bool,
-    filter_gasoil: bool,
+pub enum MaintenanceType {
+    FilterGasoil,
+    SparkPlug,
 }
