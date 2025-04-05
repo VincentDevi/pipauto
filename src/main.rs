@@ -31,7 +31,7 @@ async fn main() -> Result<(), Error> {
         password: "root",
     })
     .await?;
-    db.use_ns("warm").use_db("saas").await.unwrap();
+    db.use_ns("pipauto").use_db("saas").await.unwrap();
 
     let app_state = AppState {
         db: Arc::new(Mutex::new(db)),
