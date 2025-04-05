@@ -1,6 +1,7 @@
 mod common;
 mod entity;
 mod error;
+mod handler;
 mod repositoty;
 mod routes;
 
