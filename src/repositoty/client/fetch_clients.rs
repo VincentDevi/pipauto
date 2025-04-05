@@ -9,7 +9,7 @@ impl Repository {
         let query = "SELECT * FROM client;";
         let mut response= self.db.query(query).await?;
         let result: Vec<ModelClient> = response.take(0)?;
-        let fdp = result.into_iter().map(|x| x.into()).collect();
-        Ok(fdp)
+        let fetched_clients = result.into_iter().map(|x| x.into()).collect();
+        Ok(fetched_clients)
     }
 }

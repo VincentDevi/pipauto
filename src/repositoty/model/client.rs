@@ -1,8 +1,9 @@
 use serde::{Deserialize, Serialize};
-use surrealdb::Datetime;
+use surrealdb::{Datetime, RecordId};
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct ModelClient {
+    id: RecordId,
     first_name: String,
     last_name: String,
     address: String,
@@ -13,6 +14,9 @@ pub struct ModelClient {
 }
 
 impl ModelClient {
+    pub fn id(&self) -> RecordId {
+        self.id.clone()
+    }
     pub fn first_name(&self) -> String {
         self.first_name.clone()
     }
