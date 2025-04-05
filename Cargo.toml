@@ -4,8 +4,8 @@ version = "0.1.0"
 edition = "2024"
 
 [dependencies]
-axum = "0.7"
-chrono = "0.4.40"
+axum = "0.8"
+chrono = "0.4"
 derive_more = {version = "2.0", features = ["full"]}
 faker_rand = "0.1"
 rand = "0.8"
