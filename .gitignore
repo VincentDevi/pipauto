@@ -3,3 +3,5 @@
 ./tailwindcss
 
 ./Cargo.lock
+
+./templates/output.css
