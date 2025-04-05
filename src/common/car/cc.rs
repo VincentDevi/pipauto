@@ -1,4 +1,5 @@
 use derive_more::{Constructor, Display};
+use serde::{Deserialize, Serialize};
 
-#[derive(Debug, Clone, Copy, Constructor, Display)]
-pub struct Cc(f64);
+#[derive(Debug, Clone, Constructor, Serialize, Display, Deserialize)]
+pub struct Cc(String);
