@@ -1,4 +1,3 @@
-use super::client::ModelClient;
 use strum_macros::Display;
 use surrealdb::{Datetime, RecordId};
 
