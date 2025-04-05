@@ -9,7 +9,7 @@ impl Repository {
         let query = format!("SELECT * FROM car:{};", id);
         let mut response = self.db.query(query).await?;
         let result: Vec<ModelCar> = response.take(0)?;
-        let client = result.get(0).cloned().ok_or(RepositoryError::DatabaseError("Error in clone".into()))?;
+        let client = result.get(0).cloned().ok_or(RepositoryError::DatabaseError)?;
         Ok(client.into())
     }
 }
