@@ -36,7 +36,7 @@ INSERT [ { brand: 'mini', cc: 1.5dec, client_id: client:pbc0t540l03qmukxt20d, cr
 
 DEFINE TABLE client TYPE NORMAL SCHEMAFULL PERMISSIONS NONE;
 
-DEFINE FIELD adress ON client TYPE string PERMISSIONS FULL;
+DEFINE FIELD address ON client TYPE string PERMISSIONS FULL;
 DEFINE FIELD created_at ON client TYPE datetime DEFAULT time::now() PERMISSIONS FULL;
 DEFINE FIELD email ON client TYPE option<string> DEFAULT NONE PERMISSIONS FULL;
 DEFINE FIELD first_name ON client TYPE string PERMISSIONS FULL;
@@ -50,7 +50,7 @@ DEFINE FIELD updated_at ON client TYPE datetime DEFAULT time::now() PERMISSIONS 
 -- TABLE DATA: client
 -- ------------------------------
 
-INSERT [ { adress: 'Liège', created_at: d'2025-04-05T00:09:05.838240Z', first_name: 'Tamère', id: client:8pe1chh27xynh0d8ml8y, last_name: 'Lapute', updated_at: d'2025-04-05T00:09:05.838245Z' }, { adress: 'Paris', created_at: d'2025-04-05T00:08:48.778675Z', first_name: 'Patrick', id: client:icbxobm75z570rmbdj9z, last_name: 'Fiory', updated_at: d'2025-04-05T00:08:48.778682Z' }, { adress: 'Charleroi', created_at: d'2025-04-05T00:08:34.621171Z', first_name: 'Vincent', id: client:pbc0t540l03qmukxt20d, last_name: 'Devilers', updated_at: d'2025-04-05T00:08:34.621176Z' }, { adress: 'Charleroi', created_at: d'2025-04-04T23:49:08.343295Z', first_name: 'Hugo', id: client:xql8n6t1ude79zed6i5z, last_name: 'Bohy', updated_at: d'2025-04-04T23:49:08.343299Z' } ];
+INSERT [ { address: 'Liège', created_at: d'2025-04-05T00:09:05.838240Z', first_name: 'Tamère', id: client:8pe1chh27xynh0d8ml8y, last_name: 'Lapute', updated_at: d'2025-04-05T00:09:05.838245Z' }, { address: 'Paris', created_at: d'2025-04-05T00:08:48.778675Z', first_name: 'Patrick', id: client:icbxobm75z570rmbdj9z, last_name: 'Fiory', updated_at: d'2025-04-05T00:08:48.778682Z' }, { address: 'Charleroi', created_at: d'2025-04-05T00:08:34.621171Z', first_name: 'Vincent', id: client:pbc0t540l03qmukxt20d, last_name: 'Devilers', updated_at: d'2025-04-05T00:08:34.621176Z' }, { address: 'Charleroi', created_at: d'2025-04-04T23:49:08.343295Z', first_name: 'Hugo', id: client:xql8n6t1ude79zed6i5z, last_name: 'Bohy', updated_at: d'2025-04-04T23:49:08.343299Z' } ];
 
 -- ------------------------------
 -- TABLE: intervention
