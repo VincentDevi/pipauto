@@ -1,4 +1,5 @@
 mod error;
+mod repositoty;
 mod routes;
 
 use std::sync::Arc;
