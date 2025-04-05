@@ -1,8 +1,10 @@
+use serde::{Deserialize, Serialize};
+
 use crate::repositoty::model::ModelClient;
 
 use super::super::common::*;
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Client {
     name: String,
     address: Address,
@@ -12,11 +14,12 @@ pub struct Client {
 
 impl From<ModelClient> for Client {
     fn from(client: ModelClient) -> Self {
-        Self{
+        Self {
             name: format!("{} {}", client.first_name(), client.last_name()),
             address: Address::new(client.address()),
             phone: client.phone().map(|x| Phone::new(x)),
-            email: client.email().map(|x| Email::new(x))
+            email: client.email().map(|x| Email::new(x)),
         }
     }
 }
+

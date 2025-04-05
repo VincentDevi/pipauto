@@ -1,3 +1,4 @@
+use crate::handler::HandlerError;
 use axum::Json;
 use axum::http::StatusCode;
 use axum::response::IntoResponse;
@@ -15,6 +16,8 @@ pub enum Error {
     Internal(String),
     #[error("repository error: {0}")]
     Repository(String),
+    #[error("handler error: {0}")]
+    Handler(String),
 }
 
 impl IntoResponse for Error {
@@ -39,5 +42,11 @@ impl<T> From<PoisonError<T>> for Error {
 impl From<RepositoryError> for Error {
     fn from(error: RepositoryError) -> Self {
         Self::Repository(error.to_string())
+    }
+}
+
+impl From<HandlerError> for Error {
+    fn from(error: HandlerError) -> Self {
+        Self::Handler(error.to_string())
     }
 }
