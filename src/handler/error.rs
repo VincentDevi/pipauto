@@ -11,12 +11,15 @@ pub enum HandlerError {
     Repository(String),
     #[error("Parsing Error: {0}")]
     Parsing(String),
+    #[error("Templating Error: {0}")]
+    Templating(String),
 }
 
 impl IntoResponse for HandlerError {
     fn into_response(self) -> Response {
         let status = match self {
             HandlerError::Repository(_) => StatusCode::INTERNAL_SERVER_ERROR,
+            HandlerError::Templating(_) => StatusCode::INTERNAL_SERVER_ERROR,
             HandlerError::Parsing(_) => StatusCode::BAD_REQUEST,
         };
 
@@ -30,3 +33,8 @@ impl From<RepositoryError> for HandlerError {
     }
 }
 
+impl From<askama::Error> for HandlerError {
+    fn from(value: askama::Error) -> Self {
+        Self::Templating(value.to_string())
+    }
+}

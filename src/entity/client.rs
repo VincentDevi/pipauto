@@ -25,3 +25,24 @@ impl From<ModelClient> for Client {
     }
 }
 
+impl Client {
+    pub fn id(&self) -> String {
+        self.id.clone()
+    }
+
+    pub fn name(&self) -> String {
+        self.name.clone()
+    }
+
+    pub fn address(&self) -> Address {
+        self.address.clone()
+    }
+
+    pub fn phone(&self) -> Option<Phone> {
+        self.phone.clone()
+    }
+
+    pub fn email(&self) -> Option<Email> {
+        self.email.clone()
+    }
+}

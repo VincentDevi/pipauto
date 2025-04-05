@@ -5,18 +5,18 @@
 	<title>
 		{% block title %} {% endblock %}
 	</title>
-	<link rel="stylesheet" href="output.css">
+	<link rel="stylesheet" href="/static/output.css">
 </head>
 
 <body class="w-screen h-screen flex">
-	<aside class="h-full pl-4">
+	<aside class="h-full pl-4 w-40 border-r border-r-2 ">
 		<ul class="h-full space-y-4">
 			<li> Home </li>
 			<li> Cars </li>
 			<li> Clients </li>
 		</ul>
 	</aside>
-	<main class="h-full w-full">
+	<main class="h-full w-full flex flex-col justify-center items-center">
 		{% block content %} {% endblock %}
 	</main>
 </body>

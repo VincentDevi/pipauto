@@ -5,12 +5,12 @@ Pipauto-clients
 {% endblock %}
 
 {% block content %}
-<h2> List of clients </h2>
+<h2 class= "w-full px-4 pb-6 pt-4 text-2xl text-left"> List of clients </h2>
 
 
-<div class="relative overflow-x-auto">
-	<table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
-		<thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+<div class="relative overflow-x-auto w-full h-full">
+	<table class="w-full text-sm text-left rtl:text-right ">
+		<thead class="text-xs uppercase">
 			<tr>
 				<th scope="col" class="px-6 py-3">
 					Name
@@ -28,19 +28,29 @@ Pipauto-clients
 		</thead>
 		<tbody>
 			{% for client in clients %}
-			<tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 border-gray-200">
+			<tr class="border-b ">
 				<th scope="row"
-					class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+					class="px-6 py-4 font-medium whitespace-nowrap">
 					{{client.name}}
 				</th>
 				<td class="px-6 py-4">
 					{{client.address}}
 				</td>
 				<td class="px-6 py-4">
-					{{client.phone}}
+					{% match client.phone %}
+						{% when Some with (val) %}
+						{{val}}
+						{% when None %}
+						...
+					{% endmatch %}
 				</td>
 				<td class="px-6 py-4">
-					{{client.email}}
+					{% match client.email %}
+						{% when Some with (val) %}
+						{{val}}
+						{% when None %}
+						...
+					{% endmatch %}
 				</td>
 			</tr>
 			{% endfor %}
