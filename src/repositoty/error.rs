@@ -4,12 +4,12 @@ use thiserror::Error;
 pub enum RepositoryError {
     #[error("Parsing error: {0}")]
     ParsingError(String),
-    #[error("Database Error: {0}")]
-    DatabaseError(String),
+    #[error("Database Error")]
+    DatabaseError,
 }
 
 impl From<surrealdb::Error> for RepositoryError {
     fn from(_error: surrealdb::Error) -> Self {
-        Self::DatabaseError(_error.to_string())
+        Self::DatabaseError
     }
 }
