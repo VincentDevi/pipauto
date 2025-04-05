@@ -1,3 +1,6 @@
+use axum::Json;
+use axum::http::StatusCode;
+use axum::response::{IntoResponse, Response};
 use thiserror::Error;
 
 use crate::repositoty::RepositoryError;
@@ -10,8 +13,20 @@ pub enum HandlerError {
     Parsing(String),
 }
 
+impl IntoResponse for HandlerError {
+    fn into_response(self) -> Response {
+        let status = match self {
+            HandlerError::Repository(_) => StatusCode::INTERNAL_SERVER_ERROR,
+            HandlerError::Parsing(_) => StatusCode::BAD_REQUEST,
+        };
+
+        (status, Json(self.to_string())).into_response()
+    }
+}
+
 impl From<RepositoryError> for HandlerError {
     fn from(value: RepositoryError) -> Self {
         Self::Repository(value.to_string())
     }
 }
+
