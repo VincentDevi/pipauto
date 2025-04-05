@@ -1,7 +1,8 @@
 use strum_macros::Display;
+use serde::{Deserialize, Serialize};
 use surrealdb::{Datetime, RecordId};
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct ModelCar {
     client_id: RecordId,
     brand: String,
@@ -15,7 +16,7 @@ pub struct ModelCar {
     updated_at: Datetime,
 }
 
-#[derive(Debug, Clone, Copy, Display)]
+#[derive(Debug, Clone, Copy, Display, Serialize, Deserialize)]
 pub enum ModelFuel {
     Gasoline,
     Diesel,
