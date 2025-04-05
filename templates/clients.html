@@ -1,0 +1,52 @@
+{% extends "_layout.html" %}
+
+{% block title%}
+Pipauto-clients
+{% endblock %}
+
+{% block content %}
+<h2> List of clients </h2>
+
+
+<div class="relative overflow-x-auto">
+	<table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+		<thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+			<tr>
+				<th scope="col" class="px-6 py-3">
+					Name
+				</th>
+				<th scope="col" class="px-6 py-3">
+					Address
+				</th>
+				<th scope="col" class="px-6 py-3">
+					Phone
+				</th>
+				<th scope="col" class="px-6 py-3">
+					Email
+				</th>
+			</tr>
+		</thead>
+		<tbody>
+			{% for client in clients %}
+			<tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 border-gray-200">
+				<th scope="row"
+					class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+					{{client.name}}
+				</th>
+				<td class="px-6 py-4">
+					{{client.address}}
+				</td>
+				<td class="px-6 py-4">
+					{{client.phone}}
+				</td>
+				<td class="px-6 py-4">
+					{{client.email}}
+				</td>
+			</tr>
+			{% endfor %}
+		</tbody>
+	</table>
+</div>
+
+
+{% endblock %}
