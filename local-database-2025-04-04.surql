@@ -14,7 +14,7 @@ DEFINE FIELD brand ON car TYPE string PERMISSIONS FULL;
 DEFINE FIELD cc ON car TYPE decimal PERMISSIONS FULL;
 DEFINE FIELD client_id ON car TYPE record<client> PERMISSIONS FULL;
 DEFINE FIELD created_at ON car TYPE datetime DEFAULT time::now() PERMISSIONS FULL;
-DEFINE FIELD fuel ON car TYPE 'gasoline' | 'diesel' | 'other' PERMISSIONS FULL;
+DEFINE FIELD fuel ON car TYPE 'Gasoline' | 'Diesel' | 'Other' PERMISSIONS FULL;
 DEFINE FIELD id ON car TYPE record<car> PERMISSIONS FULL;
 DEFINE FIELD model ON car TYPE string PERMISSIONS FULL;
 DEFINE FIELD oil_quantity ON car TYPE decimal PERMISSIONS FULL;
@@ -28,7 +28,7 @@ DEFINE FIELD year ON car TYPE int PERMISSIONS FULL;
 -- TABLE DATA: car
 -- ------------------------------
 
-INSERT [ { brand: 'mini', cc: 1.5dec, client_id: client:pbc0t540l03qmukxt20d, created_at: d'2025-04-05T00:12:07.405066Z', fuel: 'gasoline', id: car:ahtb, model: 'cooper', oil_quantity: 6.5dec, oil_type: '5W30', updated_at: d'2025-04-05T00:12:07.405074Z', year: 2024 }, { brand: 'Citroën', cc: 0.9dec, client_id: client:8pe1chh27xynh0d8ml8y, created_at: d'2025-04-05T00:10:21.501856Z', fuel: 'diesel', id: car:htpf, model: 'C3', oil_quantity: 3dec, oil_type: '5W30', updated_at: d'2025-04-05T00:10:21.501880Z', year: 2021 }, { brand: 'fiat', cc: 0.5dec, client_id: client:icbxobm75z570rmbdj9z, created_at: d'2025-04-05T00:11:09.807928Z', fuel: 'other', id: car:okli, model: 'punto', oil_quantity: 2dec, oil_type: '5W30', updated_at: d'2025-04-05T00:11:09.807935Z', year: 2006 }, { brand: 'nissan', cc: 0.9dec, client_id: client:xql8n6t1ude79zed6i5z, created_at: d'2025-04-04T23:54:01.276771Z', fuel: 'gasoline', id: car:vnvk, model: 'micra', oil_quantity: 4.5dec, oil_type: '5W30', updated_at: d'2025-04-04T23:54:01.276778Z', year: 2018 } ];
+INSERT [ { brand: 'mini', cc: 1.5dec, client_id: client:pbc0t540l03qmukxt20d, created_at: d'2025-04-05T00:12:07.405Z', fuel: 'Gasoline', id: car:ahtb, model: 'cooper', oil_quantity: 6.5dec, oil_type: '5W30', updated_at: d'2025-04-05T00:12:07.405Z', year: 2024 }, { brand: 'Citroën', cc: 0.9dec, client_id: client:8pe1chh27xynh0d8ml8y, created_at: d'2025-04-05T00:10:21.501Z', fuel: 'Diesel', id: car:htpf, model: 'C3', oil_quantity: 3dec, oil_type: '5W30', updated_at: d'2025-04-05T00:10:21.501Z', year: 2021 }, { brand: 'fiat', cc: 0.5dec, client_id: client:icbxobm75z570rmbdj9z, created_at: d'2025-04-05T00:11:09.807Z', fuel: 'Other', id: car:okli, model: 'punto', oil_quantity: 2dec, oil_type: '5W30', updated_at: d'2025-04-05T00:11:09.807Z', year: 2006 }, { brand: 'nissan', cc: 0.9dec, client_id: client:xql8n6t1ude79zed6i5z, created_at: d'2025-04-04T23:54:01.276Z', fuel: 'Gasoline', id: car:vnvk, model: 'micra', oil_quantity: 4.5dec, oil_type: '5W30', updated_at: d'2025-04-04T23:54:01.276Z', year: 2018 } ];
 
 -- ------------------------------
 -- TABLE: client
