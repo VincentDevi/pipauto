@@ -1,4 +1,4 @@
 use derive_more::{Constructor, Display};
 
 #[derive(Debug, Clone, Copy, Constructor, Display)]
-pub struct Cc(f64);
+pub struct Cc(String);

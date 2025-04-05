@@ -5,9 +5,9 @@ use surrealdb::{Datetime, RecordId};
 pub struct ModelCar {
     client_id: RecordId,
     brand: String,
-    cc: f64,
+    cc: String,
     oil_type: String,
-    oil_quantity: f64,
+    oil_quantity: String,
     year: u32,
     fuel: ModelFuel,
     model: String,
