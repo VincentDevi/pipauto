@@ -5,30 +5,38 @@ Pipauto-clients
 {% endblock %}
 
 {% block content %}
-<h2 class= "w-full px-4 pb-6 pt-4 text-2xl text-left"> List of clients </h2>
+<div class="h-1/6 w-full flex flex-col">
+	<h2 class= "flex-grow w-full px-4 pb-6 pt-4 text-2xl text-left"> List of clients </h2>
+	<div class="w-full h-24 flex flex-col justify-end py-2 px-4">
+		<input
+			type="search"
+			placeholder="filter clients"
+			class="border rounded-md px-2 w-64 h-8"
+		/>
+	</div>
+</div>
 
-
-<div class="relative overflow-x-auto w-full h-full">
+<div class="relative overflow-x-auto w-full flex-grow">
 	<table class="w-full text-sm text-left rtl:text-right ">
 		<thead class="text-xs uppercase">
 			<tr>
-				<th scope="col" class="px-6 py-3">
-					Name
+				<th scope="col" class="font-medium normal-case text-gray-500 px-6 py-3">
+					name
 				</th>
-				<th scope="col" class="px-6 py-3">
-					Address
+				<th scope="col" class="font-medium normal-case text-gray-500 px-6 py-3">
+					address
 				</th>
-				<th scope="col" class="px-6 py-3">
-					Phone
+				<th scope="col" class="font-medium normal-case text-gray-500 px-6 py-3">
+					phone
 				</th>
-				<th scope="col" class="px-6 py-3">
-					Email
+				<th scope="col" class="font-medium normal-case text-gray-500 px-6 py-3">
+					email
 				</th>
 			</tr>
 		</thead>
 		<tbody>
 			{% for client in clients %}
-			<tr class="border-b ">
+			<tr class="border-b border-sky-200 ">
 				<th scope="row"
 					class="px-6 py-4 font-medium whitespace-nowrap">
 					{{client.name}}
@@ -56,6 +64,30 @@ Pipauto-clients
 			{% endfor %}
 		</tbody>
 	</table>
+</div>
+<div class="h-16 w-full flex items-center justify-between px-8">
+	<div class="flex items-center gap-2"> 
+		<p> 1 </p>
+		<p> ... </p>
+		<select class="cursor-pointer border rounded-md p-2">
+			<option> 20 </option>
+			<option> 50 </option>
+			<option> 100 </option>
+		</select>
+	</div>
+	<div class="flex items-center border rounded-md w-24 h-10" >
+		<div class="w-1/2 border-r h-full cursor-pointer hover:bg-sky-200 flex items-center justify-center rounded-l-md">
+			<div class="h-6 w-6 flex items-center justify-center" >
+				<i class="fa-solid fa-chevron-left"></i>
+			</div>
+		</div>
+
+		<div class="w-1/2 h-full cursor-pointer hover:bg-sky-200 flex items-center justify-center rounded-r-md">
+			<div class="h-6 w-6 flex items-center justify-center">
+				<i class="fa-solid fa-chevron-right"></i>
+			</div>
+		</div>
+	</div>
 </div>
 
 
