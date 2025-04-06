@@ -19,8 +19,8 @@ impl From<ModelClient> for Client {
             id: client.id().to_string(),
             name: format!("{} {}", client.first_name(), client.last_name()),
             address: Address::new(client.address()),
-            phone: client.phone().map(|x| Phone::new(x)),
-            email: client.email().map(|x| Email::new(x)),
+            phone: client.phone().map(Phone::new),
+            email: client.email().map(Email::new),
         }
     }
 }

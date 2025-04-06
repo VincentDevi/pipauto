@@ -1,6 +1,6 @@
 use crate::handler::{
-    client::{handler_fetch_clients, handler_get_client},
     car::{handler_fetch_cars, handler_get_car},
+    client::{handler_fetch_clients, handler_get_client},
     home::handler_home,
 };
 use tower_http::services::fs::ServeDir;

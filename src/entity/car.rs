@@ -1,6 +1,9 @@
 use serde::{Deserialize, Serialize};
 
-use crate::repositoty::model::{ModelCar, ModelFuel};
+use crate::{
+    common::Year,
+    repositoty::model::{ModelCar, ModelFuel},
+};
 
 use super::super::common::car::*;
 
@@ -14,6 +17,7 @@ pub struct Car {
     fuel: Fuel,
     oil_quantity: OilQuantity,
     oil_type: OilType,
+    year: Year,
 }
 
 impl From<ModelCar> for Car {
@@ -27,10 +31,32 @@ impl From<ModelCar> for Car {
             fuel: match car.fuel() {
                 ModelFuel::Gasoline => Fuel::Gasoline,
                 ModelFuel::Diesel => Fuel::Diesel,
-                ModelFuel::Other => Fuel::Other
+                ModelFuel::Other => Fuel::Other,
             },
             oil_quantity: OilQuantity::new(car.oil_quantity()),
             oil_type: OilType::new(car.oil_type()),
+            year: Year::new(car.year()),
         }
+    }
+}
+
+impl Car {
+    pub fn cc(&self) -> &Cc {
+        &self.cc
+    }
+    pub fn brand(&self) -> &Brand {
+        &self.brand
+    }
+    pub fn fuel(&self) -> &Fuel {
+        &self.fuel
+    }
+    pub fn oil_quantity(&self) -> &OilQuantity {
+        &self.oil_quantity
+    }
+    pub fn oil_qtype(&self) -> &OilType {
+        &self.oil_type
+    }
+    pub fn year(&self) -> &Year {
+        &self.year
     }
 }

@@ -5,59 +5,85 @@ Pipauto-cars
 {% endblock %}
 
 {% block content %}
-<h2> List of clients </h2>
+<div class="h-1/6 w-full flex flex-col">
+	<h2 class= "flex-grow w-full px-4 pb-6 pt-4 text-2xl text-left"> List of cars </h2>
+	<div class="w-full h-24 flex flex-col justify-end py-2 px-4">
+		<input
+			type="search"
+			placeholder="filter cars"
+			class="border rounded-md px-2 w-64 h-8"
+		/>
+	</div>
+</div>
 
-
-<div class="relative overflow-x-auto">
-	<table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
-		<thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+<div class="relative overflow-x-auto w-full flex-grow">
+	<table class="w-full text-sm text-left rtl:text-right ">
+		<thead class="text-xs uppercase">
 			<tr>
-				<th scope="col" class="px-6 py-3">
-					Brand
+				<th scope="col" class="font-medium normal-case text-gray-500 px-6 py-3">
+					brand
 				</th>
-				<th scope="col" class="px-6 py-3">
-					Cc
+				<th scope="col" class="font-medium normal-case text-gray-500 px-6 py-3">
+					cc
 				</th>
-				<th scope="col" class="px-6 py-3">
-					Fuel
+				<th scope="col" class="font-medium normal-case text-gray-500 px-6 py-3">
+					year
 				</th>
-				<th scope="col" class="px-6 py-3">
-					Model
+				<th scope="col" class="font-medium normal-case text-gray-500 px-6 py-3">
+					oil type
 				</th>
-				<th scope="col" class="px-6 py-3">
-					Oil quantity
-				</th>
-				<th scope="col" class="px-6 py-3">
-					Oil type
+				<th scope="col" class="font-medium normal-case text-gray-500 px-6 py-3">
+					oil quantity	
 				</th>
 			</tr>
 		</thead>
 		<tbody>
 			{% for car in cars %}
-			<tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 border-gray-200">
+			<tr class="border-b border-sky-200 ">
 				<th scope="row"
-					class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+					class="px-6 py-4 font-medium whitespace-nowrap">
 					{{car.brand}}
 				</th>
 				<td class="px-6 py-4">
 					{{car.cc}}
 				</td>
 				<td class="px-6 py-4">
-					{{car.fuel}}
-				</td>
-				<td class="px-6 py-4">
-					{{car.model}}
-				</td>
-				<td class="px-6 py-4">
-					{{car.oil_quantity}}
+					{{car.year}}
 				</td>
 				<td class="px-6 py-4">
 					{{car.oil_type}}
+				</td>
+				<td class="px-6 py-4">
+					{{car.oil_quantity}}
 				</td>
 			</tr>
 			{% endfor %}
 		</tbody>
 	</table>
+</div>
+<div class="h-16 w-full flex items-center justify-between px-8">
+	<div class="flex items-center gap-2"> 
+		<p> 1 </p>
+		<p> ... </p>
+		<select class="cursor-pointer border rounded-md p-2">
+			<option> 20 </option>
+			<option> 50 </option>
+			<option> 100 </option>
+		</select>
+	</div>
+	<div class="flex items-center border rounded-md w-24 h-10" >
+		<div class="w-1/2 border-r h-full cursor-pointer hover:bg-sky-200 flex items-center justify-center rounded-l-md">
+			<div class="h-6 w-6 flex items-center justify-center" >
+				<i class="fa-solid fa-chevron-left"></i>
+			</div>
+		</div>
+
+		<div class="w-1/2 h-full cursor-pointer hover:bg-sky-200 flex items-center justify-center rounded-r-md">
+			<div class="h-6 w-6 flex items-center justify-center">
+				<i class="fa-solid fa-chevron-right"></i>
+			</div>
+		</div>
+	</div>
 </div>
 
 
