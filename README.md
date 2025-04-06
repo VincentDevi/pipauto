@@ -1,7 +1,7 @@
 # Pipauto
 
 ## How to run the project
-run this command 
+Run the following command:
 ```
 ./dev.sh
 ```
