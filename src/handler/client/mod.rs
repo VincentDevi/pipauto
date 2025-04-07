@@ -1,8 +1,12 @@
-use crate::{AppState, entity::Client, repositoty::Repository};
+use crate::{
+    AppState,
+    entity::Client,
+    repositoty::{PagingFilter, Repository},
+};
 use askama::Template;
 use axum::{
     Json,
-    extract::{Path, State},
+    extract::{Path, Query, State},
     response::{Html, IntoResponse},
 };
 
@@ -19,10 +23,11 @@ pub async fn handler_get_client(
 
 pub async fn handler_fetch_clients(
     State(state): State<AppState>,
+    pagination: Query<PagingFilter>,
 ) -> Result<impl IntoResponse, HandlerError> {
     let db = state.db.lock().await;
     let repository = Repository::new(&db);
-    let fetched_clients = repository.fetch_clients().await?;
+    let fetched_clients = repository.fetch_clients(pagination.0).await?;
     let okok: Vec<ClientTemp> = fetched_clients.into_iter().map(|x| x.into()).collect();
     let template = ClientsTemplate { clients: okok };
     Ok(Html(template.render()?))
