@@ -12,7 +12,7 @@ pub fn routes(app_state: AppState) -> Router {
     let api_router = Router::new()
         .route("/", get(handler_home))
         .route("/clients", get(handler_fetch_clients))
-        .route("/clients/{id}", get(handler_get_client))
+        .route("/client/{id}", get(handler_get_client))
         .route("/cars", get(handler_fetch_cars))
         .route("/cars/{id}", get(handler_get_car))
         .with_state(app_state);
