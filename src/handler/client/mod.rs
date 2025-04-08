@@ -95,8 +95,16 @@ pub async fn handle_decrement_clients_paging(
 ) -> Result<impl IntoResponse, HandlerError> {
     let db = state.db.lock().await;
     let repository = Repository::new(&db);
+
+    // Calculate new offset, ensuring it doesn't go below zero
+    let new_offset = if state.offset >= state.limit {
+        state.offset - state.limit
+    } else {
+        0
+    };
+
     let fetched_clients = repository
-        .fetch_clients(PagingFilter::new(state.offset - 1, state.limit))
+        .fetch_clients(PagingFilter::new(new_offset, state.limit))
         .await?;
     let okok: Vec<ClientTemp> = fetched_clients.into_iter().map(|x| x.into()).collect();
     let template = ClientsTableTemplate { clients: okok };
