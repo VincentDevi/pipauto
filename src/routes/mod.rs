@@ -1,6 +1,9 @@
 use crate::handler::{
     car::{handler_fetch_cars, handler_get_car},
-    client::{handler_fetch_clients, handler_get_client},
+    client::{
+        handle_clients_table, handle_decrement_clients_paging, handle_increment_clients_paging,
+        handler_fetch_clients, handler_get_client,
+    },
     home::handler_home,
 };
 use tower_http::services::fs::ServeDir;
@@ -12,6 +15,15 @@ pub fn routes(app_state: AppState) -> Router {
     let api_router = Router::new()
         .route("/", get(handler_home))
         .route("/clients", get(handler_fetch_clients))
+        .route("/clients/table", get(handle_clients_table))
+        .route(
+            "/clients/decrement/paging",
+            get(handle_decrement_clients_paging),
+        )
+        .route(
+            "/clients/increment/paging",
+            get(handle_increment_clients_paging),
+        )
         .route("/client/{id}", get(handler_get_client))
         .route("/cars", get(handler_fetch_cars))
         .route("/cars/{id}", get(handler_get_car))

@@ -20,6 +20,8 @@ use tokio::sync::Mutex;
 #[derive(Clone)]
 struct AppState {
     db: Arc<Mutex<Surreal<Client>>>,
+    limit: u32,
+    offset: u32,
 }
 
 #[tokio::main]
@@ -35,6 +37,8 @@ async fn main() -> Result<(), Error> {
 
     let app_state = AppState {
         db: Arc::new(Mutex::new(db)),
+        limit: 2,
+        offset: 0,
     };
 
     let listener = TcpListener::bind("localhost:3000").await.unwrap();
