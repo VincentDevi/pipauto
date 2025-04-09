@@ -15,9 +15,9 @@ use surrealdb::{
     opt::auth::Root,
 };
 use tokio::net::TcpListener;
-use tokio::sync::Mutex;
+use tokio::sync::{Mutex, RwLock};
 
-#[derive(Clone)]
+#[derive(Debug)]
 struct AppState {
     db: Arc<Mutex<Surreal<Client>>>,
     limit: u32,
@@ -35,11 +35,11 @@ async fn main() -> Result<(), Error> {
     .await?;
     db.use_ns("pipauto").use_db("saas").await.unwrap();
 
-    let app_state = AppState {
+    let app_state = Arc::new(RwLock::new(AppState {
         db: Arc::new(Mutex::new(db)),
         limit: 2,
         offset: 0,
-    };
+    }));
 
     let listener = TcpListener::bind("localhost:3000").await.unwrap();
 

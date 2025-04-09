@@ -43,6 +43,24 @@ impl PagingFilter {
                 .map_err(|err| RepositoryError::ParsingError(err.to_string()))?,
         })
     }
+    pub fn offset(&self) -> u32 {
+        self.offset
+    }
+    pub fn limit(&self) -> u32 {
+        self.limit
+    }
+    pub fn increment_paging(&self, value: u32) -> Self {
+        Self {
+            offset: self.offset + value,
+            limit: self.limit,
+        }
+    }
+    pub fn decrement_paging(&self, value: u32) -> Self {
+        Self {
+            offset: self.offset - value,
+            limit: self.limit,
+        }
+    }
 }
 
 impl Display for PagingFilter {
