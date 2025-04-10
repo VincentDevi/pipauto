@@ -1,28 +1,22 @@
-<div class="h-16 w-full flex items-center justify-between px-8">
-	<div class="flex items-center gap-4 rounded-2xl  bg-red-100">
+<div class="h-16 w-full flex items-center justify-between px-8 border-t-2 border-gray-600">
+
+	<div class="flex items-center">
 		<p class="space-x-2">
-			{{paging.start}}
-			<span> ... </span>
-			{{paging.count}}
+			<span class="font-semibold">{{paging.start}}</span>
+			<span class="font-light text-gray-400"> of </span>
+			<span class="font-semibold">{{paging.count}}</span>
 		</p>
-		<select class="cursor-pointer border rounded-md p-2">
-			<option hx-get="clients/table?offset=0&limit=2" hx-trigger="click" hx-target="#table"> 2
-			</option>
-			<option hx-get="clients/table?offset=0&limit=3" hx-trigger="click" hx-target="#table"> 3
-			</option>
-			<option hx-get="clients/table?offset=0&limit=5" hx-trigger="click" hx-target="#table"> 5
-			</option>
-		</select>
-		<button class="border" hx-get="clients/table?offset=0&limit=2" hx-target="#table" hx-swap="outerHTML">
-			test</button>
 	</div>
+
 	<div class="flex items-center border rounded-md w-24 h-10">
 		<div
 			class="w-1/2 border-r h-full cursor-pointer hover:bg-sky-200 flex items-center justify-center rounded-l-md">
+
 			<div class="h-6 w-6 flex items-center justify-center" hx-get="/clients/decrement/paging"
 				hx-trigger="click" hx-swap="outerHTML" hx-target="#table">
 				<i class="fa-solid fa-chevron-left"></i>
 			</div>
+
 		</div>
 
 		<div class="w-1/2 h-full cursor-pointer hover:bg-sky-200 flex items-center justify-center rounded-r-md">
@@ -31,5 +25,7 @@
 				<i class="fa-solid fa-chevron-right"></i>
 			</div>
 		</div>
+
 	</div>
+
 </div>

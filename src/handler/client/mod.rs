@@ -10,14 +10,13 @@ use axum::{
 
 use super::error::*;
 pub async fn handler_get_client(
-    State(_state): State<SharedState>,
-    _id: Path<String>,
+    State(state): State<SharedState>,
+    id: Path<String>,
 ) -> Result<Json<Client>, HandlerError> {
-    //   let db = state.db.lock().await;
-    //   let repositoty = Repository::new(&db);
-    //  let client_detail = repositoty.get_client(id.to_string()).await?;
-    todo!()
-    //    Ok(Json(client_detail))
+    let db = state.read().await.db.lock().await.clone();
+    let repositoty = Repository::new(&db);
+    let client_detail = repositoty.get_client(id.to_string()).await?;
+    Ok(Json(client_detail))
 }
 
 pub async fn handler_fetch_clients(
@@ -27,12 +26,12 @@ pub async fn handler_fetch_clients(
     let paging = state.read().await.paging;
     let repository = Repository::new(&db);
     let fetched_clients = repository.fetch_clients(paging).await?;
-    let okok: Vec<ClientTemp> = fetched_clients.into_iter().map(|x| x.into()).collect();
+    let okok: Vec<ClientTemp> = fetched_clients.0.into_iter().map(|x| x.into()).collect();
     let template = ClientsTemplate {
         clients: okok,
         paging: Paging {
             start: paging.offset() + 1,
-            count: 100,
+            count: fetched_clients.1,
         },
     };
     Ok(Html(template.render()?))
@@ -79,12 +78,12 @@ pub async fn handle_clients_table(
     let repository = Repository::new(&db);
     let fetched_clients = repository.fetch_clients(paging).await?;
 
-    let okok: Vec<ClientTemp> = fetched_clients.into_iter().map(|x| x.into()).collect();
+    let okok: Vec<ClientTemp> = fetched_clients.0.into_iter().map(|x| x.into()).collect();
     let template = ClientsTableTemplate {
         clients: okok,
         paging: Paging {
             start: paging.offset() + 1,
-            count: 100,
+            count: fetched_clients.1,
         },
     };
     Ok(Html(template.render()?))
@@ -107,25 +106,20 @@ pub async fn handle_increment_clients_paging(
     {
         let mut app_state = state.write().await;
         let current_paging = app_state.paging;
-        app_state.paging = current_paging.increment_paging(2);
-        println!(
-            "begin decrement : {}, new value: {}",
-            current_paging.offset(),
-            app_state.paging.offset()
-        );
+        app_state.paging = current_paging.increment_paging(current_paging.limit());
     }
 
     let paging = state.read().await.paging;
 
     let fetched_clients = repository.fetch_clients(paging).await?;
 
-    let okok: Vec<ClientTemp> = fetched_clients.into_iter().map(|x| x.into()).collect();
+    let okok: Vec<ClientTemp> = fetched_clients.0.into_iter().map(|x| x.into()).collect();
 
     let template = ClientsTableTemplate {
         clients: okok,
         paging: Paging {
             start: paging.offset() + 1,
-            count: 100,
+            count: fetched_clients.1,
         },
     };
     println!("end of increment : {} ", paging.offset());
@@ -142,23 +136,18 @@ pub async fn handle_decrement_clients_paging(
     {
         let mut app_state = state.write().await;
         let current_paging = app_state.paging;
-        app_state.paging = current_paging.decrement_paging(2);
-        println!(
-            "begin decrement : {}, new value: {}",
-            current_paging.offset(),
-            app_state.paging.offset()
-        );
+        app_state.paging = current_paging.decrement_paging(current_paging.limit());
     }
 
     let paging = state.read().await.paging;
 
     let fetched_clients = repository.fetch_clients(paging).await?;
-    let okok: Vec<ClientTemp> = fetched_clients.into_iter().map(|x| x.into()).collect();
+    let okok: Vec<ClientTemp> = fetched_clients.0.into_iter().map(|x| x.into()).collect();
     let template = ClientsTableTemplate {
         clients: okok,
         paging: Paging {
             start: paging.offset() + 1,
-            count: 100,
+            count: fetched_clients.1,
         },
     };
     println!("end of decrement : {} ", paging.offset());

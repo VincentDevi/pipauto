@@ -1,6 +1,6 @@
-use std::sync::Arc;
+use super::super::SharedState;
 
-use crate::{AppState, entity::Car, repositoty::Repository};
+use crate::{entity::Car, repositoty::Repository};
 use askama::Template;
 use axum::{
     Json,
@@ -11,19 +11,19 @@ use axum::{
 use super::error::*;
 
 pub async fn handler_get_car(
-    State(state): State<Arc<AppState>>,
+    State(state): State<SharedState>,
     id: Path<String>,
 ) -> Result<Json<Car>, HandlerError> {
-    let db = state.db.lock().await;
+    let db = state.read().await.db.lock().await.clone();
     let repository = Repository::new(&db);
     let car_details = repository.get_car(id.to_string()).await?;
     Ok(Json(car_details))
 }
 
 pub async fn handler_fetch_cars(
-    State(state): State<Arc<AppState>>,
+    State(state): State<SharedState>,
 ) -> Result<impl IntoResponse, HandlerError> {
-    let db = state.db.lock().await;
+    let db = state.read().await.db.lock().await.clone();
     let repository = Repository::new(&db);
     let fetched_cars = repository.fetch_cars().await?;
     let prout = fetched_cars.into_iter().map(|x| x.into()).collect();
