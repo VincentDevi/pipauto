@@ -30,18 +30,28 @@ pub struct PagingFilter {
 }
 
 impl PagingFilter {
-    pub fn new(offset: u32, limit: u32) -> Self {
-        Self { offset, limit }
+    pub fn offset(&self) -> u32 {
+        self.offset
     }
-    pub fn from_path(offset: String, limit: String) -> Result<Self, RepositoryError> {
-        Ok(Self {
-            offset: offset
-                .parse::<u32>()
-                .map_err(|err| RepositoryError::ParsingError(err.to_string()))?,
-            limit: limit
-                .parse::<u32>()
-                .map_err(|err| RepositoryError::ParsingError(err.to_string()))?,
-        })
+    pub fn limit(&self) -> u32 {
+        self.limit
+    }
+    pub fn increment_paging(&self, value: u32) -> Self {
+        Self {
+            offset: self.offset + value,
+            limit: self.limit,
+        }
+    }
+    pub fn decrement_paging(&self, value: u32) -> Self {
+        let offset = if value > self.offset {
+            0
+        } else {
+            self.offset - value
+        };
+        Self {
+            offset,
+            limit: self.limit,
+        }
     }
 }
 
@@ -55,7 +65,7 @@ impl Default for PagingFilter {
     fn default() -> Self {
         Self {
             offset: 0,
-            limit: 20,
+            limit: 2,
         }
     }
 }

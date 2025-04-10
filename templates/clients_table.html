@@ -1,0 +1,52 @@
+<div id="table" class="w-full h-full flex flex-col">
+	<div class="relative overflow-x-auto w-full flex-grow">
+		<table class="w-full text-sm text-left rtl:text-right ">
+			<thead class="text-xs uppercase">
+				<tr>
+					<th scope="col" class="font-medium normal-case text-gray-500 px-6 py-3">
+						name
+					</th>
+					<th scope="col" class="font-medium normal-case text-gray-500 px-6 py-3">
+						address
+					</th>
+					<th scope="col" class="font-medium normal-case text-gray-500 px-6 py-3">
+						phone
+					</th>
+					<th scope="col" class="font-medium normal-case text-gray-500 px-6 py-3">
+						email
+					</th>
+				</tr>
+			</thead>
+			<tbody>
+				{% for client in clients %}
+				<tr class="border-b border-sky-200 ">
+					<th scope="row" class="px-6 py-4 font-medium whitespace-nowrap">
+						{{client.name}}
+					</th>
+					<td class="px-6 py-4">
+						{{client.address}}
+					</td>
+					<td class="px-6 py-4">
+						{% match client.phone %}
+						{% when Some with (val) %}
+						{{val}}
+						{% when None %}
+						...
+						{% endmatch %}
+					</td>
+					<td class="px-6 py-4">
+						{% match client.email %}
+						{% when Some with (val) %}
+						{{val}}
+						{% when None %}
+						...
+						{% endmatch %}
+					</td>
+				</tr>
+				{% endfor %}
+			</tbody>
+		</table>
+
+	</div>
+	{% include "clients_table_pagination.html" %}
+</div>
