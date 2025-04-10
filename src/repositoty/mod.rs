@@ -56,8 +56,13 @@ impl PagingFilter {
         }
     }
     pub fn decrement_paging(&self, value: u32) -> Self {
+        let offset = if value > self.offset {
+            0
+        } else {
+            self.offset - value
+        };
         Self {
-            offset: self.offset - value,
+            offset,
             limit: self.limit,
         }
     }

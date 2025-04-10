@@ -1,4 +1,4 @@
-use std::sync::Arc;
+use super::SharedState;
 
 use crate::handler::{
     car::{handler_fetch_cars, handler_get_car},
@@ -8,13 +8,12 @@ use crate::handler::{
     },
     home::handler_home,
 };
-use tokio::sync::RwLock;
+use axum_macros::debug_handler;
 use tower_http::services::fs::ServeDir;
 
-use super::AppState;
 use axum::{Router, routing::get};
 
-pub fn routes(app_state: Arc<RwLock<AppState>>) -> Router {
+pub fn routes(app_state: SharedState) -> Router {
     let api_router = Router::new()
         .route("/", get(handler_home))
         .route("/clients", get(handler_fetch_clients))
@@ -27,9 +26,9 @@ pub fn routes(app_state: Arc<RwLock<AppState>>) -> Router {
             "/clients/increment/paging",
             get(handle_increment_clients_paging),
         )
-        .route("/client/{id}", get(handler_get_client))
-        .route("/cars", get(handler_fetch_cars))
-        .route("/cars/{id}", get(handler_get_car))
+        //        .route("/client/{id}", get(handler_get_client))
+        //        .route("/cars", get(handler_fetch_cars))
+        //        .route("/cars/{id}", get(handler_get_car))
         .with_state(app_state);
 
     let static_router = Router::new().nest_service("/static", ServeDir::new("templates"));

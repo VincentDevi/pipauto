@@ -1,44 +1,37 @@
-use std::sync::Arc;
+use super::super::SharedState;
 
-use crate::{
-    AppState,
-    entity::Client,
-    repositoty::{PagingFilter, Repository},
-};
+use crate::{entity::Client, repositoty::Repository};
 use askama::Template;
 use axum::{
     Json,
-    extract::{Path, Query, State},
+    extract::{Path, State},
     response::{Html, IntoResponse},
 };
-use tokio::sync::RwLock;
 
 use super::error::*;
 pub async fn handler_get_client(
-    State(state): State<Arc<RwLock<AppState>>>,
-    id: Path<String>,
+    State(_state): State<SharedState>,
+    _id: Path<String>,
 ) -> Result<Json<Client>, HandlerError> {
-    let state = state.read().await;
-    let db = state.db.lock().await;
-    let repositoty = Repository::new(&db);
-    let client_detail = repositoty.get_client(id.to_string()).await?;
-    Ok(Json(client_detail))
+    //   let db = state.db.lock().await;
+    //   let repositoty = Repository::new(&db);
+    //  let client_detail = repositoty.get_client(id.to_string()).await?;
+    todo!()
+    //    Ok(Json(client_detail))
 }
 
 pub async fn handler_fetch_clients(
-    State(state): State<Arc<RwLock<AppState>>>,
+    State(state): State<SharedState>,
 ) -> Result<impl IntoResponse, HandlerError> {
-    let state = state.read().await;
-    let db = state.db.lock().await;
+    let db = state.read().await.db.lock().await.clone();
+    let paging = state.read().await.paging;
     let repository = Repository::new(&db);
-    let fetched_clients = repository
-        .fetch_clients(PagingFilter::new(state.offset, state.limit))
-        .await?;
+    let fetched_clients = repository.fetch_clients(paging).await?;
     let okok: Vec<ClientTemp> = fetched_clients.into_iter().map(|x| x.into()).collect();
     let template = ClientsTemplate {
         clients: okok,
         paging: Paging {
-            start: state.offset + 1,
+            start: paging.offset() + 1,
             count: 100,
         },
     };
@@ -78,18 +71,19 @@ impl From<Client> for ClientTemp {
 }
 
 pub async fn handle_clients_table(
-    State(state): State<Arc<RwLock<AppState>>>,
-    pagination: Query<PagingFilter>,
+    State(state): State<SharedState>,
 ) -> Result<impl IntoResponse, HandlerError> {
-    let state = state.read().await;
-    let db = state.db.lock().await;
+    let db = state.read().await.db.lock().await.clone();
+    let paging = state.read().await.paging;
+
     let repository = Repository::new(&db);
-    let fetched_clients = repository.fetch_clients(pagination.0).await?;
+    let fetched_clients = repository.fetch_clients(paging).await?;
+
     let okok: Vec<ClientTemp> = fetched_clients.into_iter().map(|x| x.into()).collect();
     let template = ClientsTableTemplate {
         clients: okok,
         paging: Paging {
-            start: state.offset + 1,
+            start: paging.offset() + 1,
             count: 100,
         },
     };
@@ -104,50 +98,48 @@ struct ClientsTableTemplate {
 }
 
 pub async fn handle_increment_clients_paging(
-    State(state): State<Arc<RwLock<AppState>>>,
+    State(state): State<SharedState>,
 ) -> Result<impl IntoResponse, HandlerError> {
-    let state = state.read().await;
-    let db = state.db.lock().await;
+    let db = state.read().await.db.lock().await.clone();
+
     let repository = Repository::new(&db);
-    let new_paging = PagingFilter::new(state.offset, state.limit);
-    let fetched_clients = repository.fetch_clients(new_paging).await?;
+
+    let paging = state.write().await.paging.increment_paging(1);
+
+    let fetched_clients = repository.fetch_clients(paging).await?;
+
     let okok: Vec<ClientTemp> = fetched_clients.into_iter().map(|x| x.into()).collect();
+
     let template = ClientsTableTemplate {
         clients: okok,
         paging: Paging {
-            start: state.offset + 1,
+            start: paging.offset() + 1,
             count: 100,
         },
     };
-    println!("aaozheiahzeiuahr: {} ", state.offset);
+    println!("end of increment : {} ", paging.offset());
     Ok(Html(template.render()?))
 }
 
 pub async fn handle_decrement_clients_paging(
-    State(state): State<Arc<RwLock<AppState>>>,
+    State(state): State<SharedState>,
 ) -> Result<impl IntoResponse, HandlerError> {
-    println!("decrement handler");
-    let state_read = state.read().await;
-    let db = state_read.db.lock().await.clone();
-    let old_paging = PagingFilter::new(state_read.offset, state_read.limit);
-    drop(state_read);
-    let repository = Repository::new(&db);
-    let mut teeeest = state.write().await;
-    teeeest.offset += old_paging.offset();
-    drop(teeeest);
-    let new_paging = old_paging.decrement_paging(1);
+    let db = state.read().await.db.lock().await.clone();
 
-    let fetched_clients = repository.fetch_clients(new_paging).await?;
+    let repository = Repository::new(&db);
+
+    let mut paging = state.write().await.paging;
+    paging = paging.decrement_paging(paging.limit());
+
+    let fetched_clients = repository.fetch_clients(paging).await?;
     let okok: Vec<ClientTemp> = fetched_clients.into_iter().map(|x| x.into()).collect();
     let template = ClientsTableTemplate {
         clients: okok,
         paging: Paging {
-            start: new_paging.offset() + 1,
+            start: paging.offset() + 1,
             count: 100,
         },
     };
-    println!("old paging : {:?}", old_paging);
-    println!("new paging : {:?}", new_paging);
-    println!("end of dercrement handler");
+    println!("end of decrement : {} ", paging.offset());
     Ok(Html(template.render()?))
 }

@@ -7,15 +7,13 @@ use axum::{
     extract::{Path, State},
     response::{Html, IntoResponse},
 };
-use tokio::sync::RwLock;
 
 use super::error::*;
 
 pub async fn handler_get_car(
-    State(state): State<Arc<RwLock<AppState>>>,
+    State(state): State<Arc<AppState>>,
     id: Path<String>,
 ) -> Result<Json<Car>, HandlerError> {
-    let state = state.read().await;
     let db = state.db.lock().await;
     let repository = Repository::new(&db);
     let car_details = repository.get_car(id.to_string()).await?;
@@ -23,9 +21,8 @@ pub async fn handler_get_car(
 }
 
 pub async fn handler_fetch_cars(
-    State(state): State<Arc<RwLock<AppState>>>,
+    State(state): State<Arc<AppState>>,
 ) -> Result<impl IntoResponse, HandlerError> {
-    let state = state.read().await;
     let db = state.db.lock().await;
     let repository = Repository::new(&db);
     let fetched_cars = repository.fetch_cars().await?;
