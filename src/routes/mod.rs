@@ -11,7 +11,7 @@ use crate::handler::{
 use axum_macros::debug_handler;
 use tower_http::services::fs::ServeDir;
 
-use axum::{Router, routing::get};
+use axum::{Extension, Router, routing::get};
 
 pub fn routes(app_state: SharedState) -> Router {
     let api_router = Router::new()
@@ -29,6 +29,7 @@ pub fn routes(app_state: SharedState) -> Router {
         //        .route("/client/{id}", get(handler_get_client))
         //        .route("/cars", get(handler_fetch_cars))
         //        .route("/cars/{id}", get(handler_get_car))
+        .layer(Extension(app_state.clone()))
         .with_state(app_state);
 
     let static_router = Router::new().nest_service("/static", ServeDir::new("templates"));

@@ -102,9 +102,10 @@ pub async fn handle_increment_clients_paging(
 ) -> Result<impl IntoResponse, HandlerError> {
     let db = state.read().await.db.lock().await.clone();
 
+    println!("begin increment : {}", state.read().await.paging.offset());
     let repository = Repository::new(&db);
 
-    let paging = state.write().await.paging.increment_paging(1);
+    let paging = state.write().await.paging.increment_paging(2);
 
     let fetched_clients = repository.fetch_clients(paging).await?;
 
