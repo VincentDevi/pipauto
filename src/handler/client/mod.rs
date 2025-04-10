@@ -104,8 +104,18 @@ pub async fn handle_increment_clients_paging(
 
     println!("begin increment : {}", state.read().await.paging.offset());
     let repository = Repository::new(&db);
+    {
+        let mut app_state = state.write().await;
+        let current_paging = app_state.paging;
+        app_state.paging = current_paging.increment_paging(2);
+        println!(
+            "begin decrement : {}, new value: {}",
+            current_paging.offset(),
+            app_state.paging.offset()
+        );
+    }
 
-    let paging = state.write().await.paging.increment_paging(2);
+    let paging = state.read().await.paging;
 
     let fetched_clients = repository.fetch_clients(paging).await?;
 
@@ -129,8 +139,18 @@ pub async fn handle_decrement_clients_paging(
 
     let repository = Repository::new(&db);
 
-    let mut paging = state.write().await.paging;
-    paging = paging.decrement_paging(paging.limit());
+    {
+        let mut app_state = state.write().await;
+        let current_paging = app_state.paging;
+        app_state.paging = current_paging.decrement_paging(2);
+        println!(
+            "begin decrement : {}, new value: {}",
+            current_paging.offset(),
+            app_state.paging.offset()
+        );
+    }
+
+    let paging = state.read().await.paging;
 
     let fetched_clients = repository.fetch_clients(paging).await?;
     let okok: Vec<ClientTemp> = fetched_clients.into_iter().map(|x| x.into()).collect();
