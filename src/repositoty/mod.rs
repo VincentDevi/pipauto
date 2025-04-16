@@ -53,6 +53,12 @@ impl PagingFilter {
             limit: self.limit,
         }
     }
+    pub fn reset(&self) -> Self {
+        Self {
+            offset: 0,
+            limit: self.limit(),
+        }
+    }
 }
 
 impl Display for PagingFilter {
