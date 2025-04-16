@@ -4,9 +4,11 @@ use crate::{entity::Client, repositoty::Repository};
 use askama::Template;
 use axum::{
     Json,
-    extract::{Path, State},
+    extract::{Path, Query, State},
     response::{Html, IntoResponse},
 };
+use serde::{Deserialize, Deserializer, de};
+use std::{fmt, str::FromStr};
 
 use super::error::*;
 pub async fn handler_get_client(
@@ -23,9 +25,11 @@ pub async fn handler_fetch_clients(
     State(state): State<SharedState>,
 ) -> Result<impl IntoResponse, HandlerError> {
     let db = state.read().await.db.lock().await.clone();
+
     let paging = state.read().await.paging;
+
     let repository = Repository::new(&db);
-    let fetched_clients = repository.fetch_clients(paging).await?;
+    let fetched_clients = repository.fetch_clients(paging, None).await?;
     let okok: Vec<ClientTemp> = fetched_clients.0.into_iter().map(|x| x.into()).collect();
     let template = ClientsTemplate {
         clients: okok,
@@ -71,12 +75,15 @@ impl From<Client> for ClientTemp {
 
 pub async fn handle_clients_table(
     State(state): State<SharedState>,
+    Query(params): Query<Params>,
 ) -> Result<impl IntoResponse, HandlerError> {
     let db = state.read().await.db.lock().await.clone();
+
+    let where_clause = params.free_text;
     let paging = state.read().await.paging;
 
     let repository = Repository::new(&db);
-    let fetched_clients = repository.fetch_clients(paging).await?;
+    let fetched_clients = repository.fetch_clients(paging, where_clause).await?;
 
     let okok: Vec<ClientTemp> = fetched_clients.0.into_iter().map(|x| x.into()).collect();
     let template = ClientsTableTemplate {
@@ -110,8 +117,9 @@ pub async fn handle_increment_clients_paging(
     }
 
     let paging = state.read().await.paging;
+    let where_clause = None;
 
-    let fetched_clients = repository.fetch_clients(paging).await?;
+    let fetched_clients = repository.fetch_clients(paging, where_clause).await?;
 
     let okok: Vec<ClientTemp> = fetched_clients.0.into_iter().map(|x| x.into()).collect();
 
@@ -140,8 +148,9 @@ pub async fn handle_decrement_clients_paging(
     }
 
     let paging = state.read().await.paging;
+    let where_clause = None;
 
-    let fetched_clients = repository.fetch_clients(paging).await?;
+    let fetched_clients = repository.fetch_clients(paging, where_clause).await?;
     let okok: Vec<ClientTemp> = fetched_clients.0.into_iter().map(|x| x.into()).collect();
     let template = ClientsTableTemplate {
         clients: okok,
@@ -152,4 +161,24 @@ pub async fn handle_decrement_clients_paging(
     };
     println!("end of decrement : {} ", paging.offset());
     Ok(Html(template.render()?))
+}
+
+#[derive(Debug, Deserialize)]
+pub struct Params {
+    #[serde(default, deserialize_with = "empty_string_as_none")]
+    free_text: Option<String>,
+}
+
+/// Serde deserialization decorator to map empty Strings to None,
+fn empty_string_as_none<'de, D, T>(de: D) -> Result<Option<T>, D::Error>
+where
+    D: Deserializer<'de>,
+    T: FromStr,
+    T::Err: fmt::Display,
+{
+    let opt = Option::<String>::deserialize(de)?;
+    match opt.as_deref() {
+        None | Some("") => Ok(None),
+        Some(s) => FromStr::from_str(s).map_err(de::Error::custom).map(Some),
+    }
 }
