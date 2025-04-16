@@ -3,8 +3,8 @@ use super::super::SharedState;
 use crate::{entity::Client, repositoty::Repository};
 use askama::Template;
 use axum::{
-    Json,
-    extract::{Path, Query, State},
+    Form,
+    extract::{Json, Path, State},
     response::{Html, IntoResponse},
 };
 use serde::{Deserialize, Deserializer, de};
@@ -75,15 +75,13 @@ impl From<Client> for ClientTemp {
 
 pub async fn handle_clients_table(
     State(state): State<SharedState>,
-    Query(params): Query<Params>,
 ) -> Result<impl IntoResponse, HandlerError> {
     let db = state.read().await.db.lock().await.clone();
 
-    let where_clause = params.free_text;
     let paging = state.read().await.paging;
 
     let repository = Repository::new(&db);
-    let fetched_clients = repository.fetch_clients(paging, where_clause).await?;
+    let fetched_clients = repository.fetch_clients(paging, None).await?;
 
     let okok: Vec<ClientTemp> = fetched_clients.0.into_iter().map(|x| x.into()).collect();
     let template = ClientsTableTemplate {
@@ -163,10 +161,36 @@ pub async fn handle_decrement_clients_paging(
     Ok(Html(template.render()?))
 }
 
+pub async fn handle_search_client(
+    State(state): State<SharedState>,
+    Form(body): Form<Body>,
+) -> Result<impl IntoResponse, HandlerError> {
+    let db = state.read().await.db.lock().await.clone();
+    let repository = Repository::new(&db);
+    {
+        let mut app_state = state.write().await;
+        let current_paging = app_state.paging;
+        app_state.paging = current_paging.reset();
+    }
+    let paging = state.read().await.paging;
+    let where_clause = body.search;
+
+    let fetched_clients = repository.fetch_clients(paging, where_clause).await?;
+    let okok: Vec<ClientTemp> = fetched_clients.0.into_iter().map(|x| x.into()).collect();
+    let template = ClientsTableTemplate {
+        clients: okok,
+        paging: Paging {
+            start: paging.offset() + 1,
+            count: fetched_clients.1,
+        },
+    };
+    Ok(Html(template.render()?))
+}
+
 #[derive(Debug, Deserialize)]
-pub struct Params {
+pub struct Body {
     #[serde(default, deserialize_with = "empty_string_as_none")]
-    free_text: Option<String>,
+    search: Option<String>,
 }
 
 /// Serde deserialization decorator to map empty Strings to None,

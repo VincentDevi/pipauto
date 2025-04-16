@@ -14,7 +14,7 @@ impl Repository {
         let where_clause = match &search_text {
             None => "".to_string(),
             Some(search_text) => format!(
-                "where full_name @@ {} or email @@ {} or phone @@ {}",
+                "where full_name @@ '{}' or email @@ '{}' or phone @@ '{}'",
                 search_text, search_text, search_text
             ),
         };
@@ -26,10 +26,10 @@ impl Repository {
             ),
         };
         let query = format!(
-            "return SELECT * {} FROM client {} {} {};
+            "return SELECT * FROM client {} {};
             return count(SELECT * FROM client);
             ",
-            score, paging, where_clause, order_by
+            where_clause, paging,
         );
 
         let mut response = self.db.query(query).await?;
