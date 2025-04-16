@@ -9,12 +9,27 @@ impl Repository {
     pub async fn fetch_clients(
         &self,
         paging: PagingFilter,
+        search_text: Option<String>,
     ) -> Result<(Vec<Client>, u32), RepositoryError> {
+        let where_clause = match &search_text {
+            None => "".to_string(),
+            Some(search_text) => format!(
+                "where full_name @@ {} or email @@ {} or phone @@ {}",
+                search_text, search_text, search_text
+            ),
+        };
+        let (score, order_by) = match search_text {
+            None => ("".to_string(), "".to_string()),
+            Some(_) => (
+                ",search::score(0) as score".to_string(),
+                "order by score asc".to_string(),
+            ),
+        };
         let query = format!(
-            "return SELECT * FROM client {};
+            "return SELECT * {} FROM client {} {} {};
             return count(SELECT * FROM client);
             ",
-            paging
+            score, paging, where_clause, order_by
         );
 
         let mut response = self.db.query(query).await?;
