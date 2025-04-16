@@ -9,9 +9,12 @@ Pipauto-clients
 	<h2 class= "flex-grow w-full px-4 pb-6 pt-4 text-2xl text-left"> List of clients </h2>
 	<div class="w-full h-24 flex flex-col justify-end py-2 px-4">
 		<input
-			type="search"
-			placeholder="filter clients"
+			name="search" type="search" placeholder="filter clients"
 			class="border rounded-md px-2 w-64 h-8"
+			hx-trigger= "input changed delay:500ms, search"
+			hx-target="#table" hx-swap="outerHTML"
+			hx-post="/clients/search"
+
 		/>
 	</div>
 </div>
