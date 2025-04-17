@@ -62,7 +62,12 @@ DEFINE INDEX client_full_name ON client FIELDS full_name SEARCH ANALYZER client_
 DEFINE INDEX client_last_name ON client FIELDS last_name SEARCH ANALYZER client_analyzer BM25(1.2,0.75) DOC_IDS_ORDER 100 DOC_LENGTHS_ORDER 100 POSTINGS_ORDER 100 TERMS_ORDER 100 DOC_IDS_CACHE 100 DOC_LENGTHS_CACHE 100 POSTINGS_CACHE 100 TERMS_CACHE 100;
 DEFINE INDEX client_phone ON client FIELDS phone SEARCH ANALYZER client_analyzer BM25(1.2,0.75) DOC_IDS_ORDER 100 DOC_LENGTHS_ORDER 100 POSTINGS_ORDER 100 TERMS_ORDER 100 DOC_IDS_CACHE 100 DOC_LENGTHS_CACHE 100 POSTINGS_CACHE 100 TERMS_CACHE 100;
 
-DEFINE EVENT full_name ON client WHEN $before.first_name != $after.first_name OR $before.last_name != $after.last_name THEN { UPDATE $parent.id SET full_name = string::concat(first_name, ' ', last_name); };
+DEFINE EVENT OVERWRITE full_name ON TABLE client 
+WHEN $event = "CREATE" OR ($event = "UPDATE" AND ($before.first_name != $after.first_name OR $before.last_name != $after.last_name))
+THEN {
+    LET $new_full_name = string::concat($after.first_name, ' ', $after.last_name);
+    UPDATE $after.id SET full_name = $new_full_name;
+};
 
 -- ------------------------------
 -- TABLE DATA: client
