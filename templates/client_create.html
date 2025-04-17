@@ -1,0 +1,32 @@
+{% extends "_layout.html" %}
+
+
+{% block title %}
+Pipauto-client
+{% endblock %}
+
+{% block content %}
+<form hx-post="/client/create">
+	<label for="first_name"> First name </label>
+	<input class="border rounded-md border-sky-300 active:broder-blue-700" type="text" name="first_name" required />
+
+	<label for="last_name"> Last name </label>
+	<input class="border rounded-md border-sky-300 active:broder-blue-700" type="text" name="last_name" required />
+
+	<label for="address"> Address </label>
+	<input class="border rounded-md border-sky-300 active:broder-blue-700" type="text" name="address" required />
+
+	<label for="phone"> Phone </label>
+	<input class="border rounded-md border-sky-300 active:broder-blue-700" type="tel" name="phone" />
+
+	<label for="email"> Email </label>
+	<input class="border rounded-md border-sky-300 active:broder-blue-700" type="email" name="email" />
+
+	<label for="car"> Car </label>
+	<input class="border rounded-md border-sky-300 active:broder-blue-700" type="text" name="car" />
+
+	<button class="bg-sky-400 border rounded-md px-4 py-2 hover:bg-sky-600 uppercase" type="submit">
+		Create
+	</button>
+</form>
+{% endblock %}

@@ -4,7 +4,8 @@ use crate::handler::{
     car::{handler_fetch_cars, handler_get_car},
     client::{
         handle_clients_table, handle_decrement_clients_paging, handle_increment_clients_paging,
-        handle_search_client, handler_fetch_clients, handler_get_client,
+        handle_search_client, handler_client_create, handler_create_client_page,
+        handler_fetch_clients, handler_get_client,
     },
     home::handler_home,
 };
@@ -30,6 +31,8 @@ pub fn routes(app_state: SharedState) -> Router {
         )
         .route("/clients/search", post(handle_search_client))
         .route("/client/{id}", get(handler_get_client))
+        .route("/client/create", get(handler_create_client_page))
+        .route("/client/create", post(handler_client_create))
         .route("/cars", get(handler_fetch_cars))
         .route("/cars/{id}", get(handler_get_car))
         .with_state(app_state);
