@@ -6,26 +6,37 @@ Pipauto-client
 {% endblock %}
 
 {% block content %}
-<form hx-post="/client/create">
-	<label for="first_name"> First name </label>
-	<input class="border rounded-md border-sky-300 active:broder-blue-700" type="text" name="first_name" required />
+<h2 class="text-xl font-bold pb-8 pt-4"> Create a new Client </h2>
+<form hx-post="/client/create" class="flex flex-col w-full h-full gap-6 items-center">
+	<label for="first_name" class="flex flex-col"> First name
+		<input class="border rounded-md border-sky-300 active:broder-blue-700" type="text" name="first_name"
+			required />
+	</label>
 
-	<label for="last_name"> Last name </label>
-	<input class="border rounded-md border-sky-300 active:broder-blue-700" type="text" name="last_name" required />
+	<label for="last_name" class="flex flex-col"> Last name
+		<input class="border rounded-md border-sky-300 active:broder-blue-700" type="text" name="last_name"
+			required />
+	</label>
 
-	<label for="address"> Address </label>
-	<input class="border rounded-md border-sky-300 active:broder-blue-700" type="text" name="address" required />
+	<label for="address" class="flex flex-col"> Address
+		<input class="border rounded-md border-sky-300 active:broder-blue-700" type="text" name="address"
+			required />
+	</label>
 
-	<label for="phone"> Phone </label>
-	<input class="border rounded-md border-sky-300 active:broder-blue-700" type="tel" name="phone" />
+	<label for="phone" class="flex flex-col"> Phone
+		<input class="border rounded-md border-sky-300 active:broder-blue-700" type="tel" name="phone" />
+	</label>
 
-	<label for="email"> Email </label>
-	<input class="border rounded-md border-sky-300 active:broder-blue-700" type="email" name="email" />
+	<label for="email" class="flex flex-col"> Email
+		<input class="border rounded-md border-sky-300 active:broder-blue-700" type="email" name="email" />
+	</label>
 
-	<label for="car"> Car </label>
-	<input class="border rounded-md border-sky-300 active:broder-blue-700" type="text" name="car" />
+	<label for="car" class="flex flex-col"> Car
+		<input class="border rounded-md border-sky-300 active:broder-blue-700" type="text" name="car" />
+	</label>
 
-	<button class="bg-sky-400 border rounded-md px-4 py-2 hover:bg-sky-600 uppercase" type="submit">
+	<button class="bg-sky-400 border rounded-md px-4 py-2 hover:bg-sky-600 uppercase hover:cursor-pointer"
+		type="submit">
 		Create
 	</button>
 </form>
