@@ -1,11 +1,14 @@
 use super::super::SharedState;
 
-use crate::{entity::Client, repositoty::Repository};
+use crate::{
+    entity::Client,
+    repositoty::{CreateClientEntity, Repository},
+};
 use askama::Template;
 use axum::{
     Form,
     extract::{Json, Path, State},
-    response::{Html, IntoResponse},
+    response::{Html, IntoResponse, Redirect},
 };
 use serde::{Deserialize, Deserializer, de};
 use std::{fmt, str::FromStr};
@@ -192,6 +195,41 @@ pub struct Body {
     #[serde(default, deserialize_with = "empty_string_as_none")]
     search: Option<String>,
 }
+
+pub async fn handler_client_create(
+    State(state): State<SharedState>,
+    Form(form_data): Form<CreateClient>,
+) -> Result<impl IntoResponse, HandlerError> {
+    let db = state.read().await.db.lock().await.clone();
+    let repository = Repository::new(&db);
+    let new_client_record_id = repository.create_client(form_data.into()).await?;
+    let id =
+        new_client_record_id.ok_or(HandlerError::Parsing("cannot create client".to_string()))?;
+    Ok(Redirect::to(&format!("client/{}", id)))
+}
+
+#[derive(Debug, Deserialize)]
+pub struct CreateClient {
+    pub first_name: String,
+    pub last_name: String,
+    #[serde(default, deserialize_with = "empty_string_as_none")]
+    pub phone: Option<String>,
+    #[serde(default, deserialize_with = "empty_string_as_none")]
+    pub email: Option<String>,
+    pub address: String,
+    #[serde(default, deserialize_with = "empty_string_as_none")]
+    pub car: Option<String>,
+}
+
+pub async fn handler_create_client_page(
+    State(_state): State<SharedState>,
+) -> Result<impl IntoResponse, HandlerError> {
+    Ok(Html(CreateClientTemplate.render()?))
+}
+
+#[derive(Template)]
+#[template(path = "client_create.html")]
+pub struct CreateClientTemplate;
 
 /// Serde deserialization decorator to map empty Strings to None,
 fn empty_string_as_none<'de, D, T>(de: D) -> Result<Option<T>, D::Error>
