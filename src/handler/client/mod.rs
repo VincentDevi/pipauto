@@ -20,7 +20,7 @@ pub async fn handler_get_client(
 ) -> Result<Json<Client>, HandlerError> {
     let db = state.read().await.db.lock().await.clone();
     let repositoty = Repository::new(&db);
-    let client_detail = repositoty.get_client(id.to_string()).await?;
+    let client_detail = repositoty.get_client(&id).await?;
     Ok(Json(client_detail))
 }
 
@@ -68,7 +68,7 @@ struct ClientTemp {
 impl From<Client> for ClientTemp {
     fn from(value: Client) -> Self {
         Self {
-            name: value.name(),
+            name: value.full_name(),
             address: value.address().to_string(),
             phone: value.phone().map(|x| x.to_string()),
             email: value.email().map(|x| x.to_string()),
@@ -227,9 +227,40 @@ pub async fn handler_create_client_page(
     Ok(Html(CreateClientTemplate.render()?))
 }
 
+pub async fn handler_update_client_page(
+    State(state): State<SharedState>,
+    Path(id): Path<String>,
+) -> Result<impl IntoResponse, HandlerError> {
+    let db = state.read().await.db.lock().await.clone();
+
+    let repository = Repository::new(&db);
+    let client = repository.get_client(&id).await?;
+
+    let template = UpdateClientTemplate {
+        id,
+        first_name: client.first_name(),
+        last_name: client.last_name(),
+        address: client.address().to_string(),
+        email: client.email().map(|x| x.to_string()),
+        phone: client.phone().map(|x| x.to_string()),
+    };
+    Ok(Html(template.render()?))
+}
+
 #[derive(Template)]
 #[template(path = "client_create.html")]
 pub struct CreateClientTemplate;
+
+#[derive(Template)]
+#[template(path = "client_update.html")]
+pub struct UpdateClientTemplate {
+    id: String,
+    first_name: String,
+    last_name: String,
+    address: String,
+    phone: Option<String>,
+    email: Option<String>,
+}
 
 /// Serde deserialization decorator to map empty Strings to None,
 fn empty_string_as_none<'de, D, T>(de: D) -> Result<Option<T>, D::Error>
