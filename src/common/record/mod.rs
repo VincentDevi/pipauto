@@ -1,3 +1,4 @@
+use serde::{Deserialize, Serialize};
 use surrealdb::RecordId;
 
 pub trait Records {
@@ -8,7 +9,7 @@ pub trait Records {
     fn new(id: &str) -> Self;
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Deserialize, Serialize)]
 pub struct ClientRecordId {
     table: String,
     id: String,

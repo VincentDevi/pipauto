@@ -13,6 +13,6 @@ impl Repository {
             .first()
             .cloned()
             .ok_or(RepositoryError::DatabaseError)?;
-        Ok(client.into())
+        client.try_into().map_err(RepositoryError::ParsingError)
     }
 }

@@ -6,7 +6,7 @@ use super::super::common::*;
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Client {
-    id: String,
+    id: ClientRecordId,
     first_name: String,
     last_name: String,
     full_name: String,
@@ -15,22 +15,23 @@ pub struct Client {
     email: Option<Email>,
 }
 
-impl From<ModelClient> for Client {
-    fn from(client: ModelClient) -> Self {
-        Self {
-            id: client.id().to_string(),
+impl TryFrom<ModelClient> for Client {
+    type Error = String;
+    fn try_from(client: ModelClient) -> Result<Self, Self::Error> {
+        Ok(Self {
+            id: client.id().try_into()?,
             first_name: client.first_name(),
             last_name: client.last_name(),
             full_name: format!("{} {}", client.first_name(), client.last_name()),
             address: Address::new(client.address()),
             phone: client.phone().map(Phone::new),
             email: client.email().map(Email::new),
-        }
+        })
     }
 }
 
 impl Client {
-    pub fn id(&self) -> String {
+    pub fn id(&self) -> ClientRecordId {
         self.id.clone()
     }
 

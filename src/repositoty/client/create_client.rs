@@ -2,6 +2,7 @@ use serde::{Deserialize, Serialize};
 use surrealdb::RecordId;
 
 use crate::{
+    entity::Client,
     handler::client::CreateClient,
     repositoty::{RepositoryError, model::ModelClient},
 };
@@ -12,14 +13,17 @@ impl Repository {
     pub async fn create_client(
         &self,
         form_data: CreateClientEntity,
-    ) -> Result<Option<RecordId>, RepositoryError> {
+    ) -> Result<Client, RepositoryError> {
         let create_client_model: CreateClientModel = form_data.into();
         let record: Option<ModelClient> = self
             .db
             .create("client")
             .content(create_client_model)
             .await?;
-        Ok(record.map(|x| x.id()))
+        Ok(record
+            .ok_or(RepositoryError::DatabaseError)?
+            .try_into()
+            .map_err(RepositoryError::ParsingError)?)
     }
 }
 

@@ -2,6 +2,7 @@ use serde::{Deserialize, Serialize};
 use surrealdb::{RecordId, opt::PatchOp};
 
 use crate::{
+    entity::Client,
     handler::client::UpdateClient,
     repositoty::{RepositoryError, model::ModelClient},
 };
@@ -13,9 +14,8 @@ impl Repository {
         &self,
         client_id: RecordId,
         form_data: UpdateClient,
-    ) -> Result<(), RepositoryError> {
+    ) -> Result<Client, RepositoryError> {
         let update_client_model: UpdateClientEntity = form_data.into();
-        println!("test test : {}", client_id);
         let record: Option<ModelClient> = self
             .db
             .update(client_id)
@@ -28,8 +28,10 @@ impl Repository {
             .patch(PatchOp::replace("phone", update_client_model.phone))
             .patch(PatchOp::replace("email", update_client_model.email))
             .await?;
-        println!("{:?}", record);
-        Ok(())
+        Ok(record
+            .ok_or(RepositoryError::DatabaseError)?
+            .try_into()
+            .map_err(RepositoryError::ParsingError)?)
     }
 }
 

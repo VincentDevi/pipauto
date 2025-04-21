@@ -7,7 +7,10 @@ Pipauto-client
 
 {% block content %}
 <h2 class="text-xl font-bold pb-8 pt-4"> Update a Client </h2>
-<form hx-post="/client/update/{{id}}" class="flex flex-col w-full h-full gap-6 items-center">
+<form 
+	hx-post="/client/update/{{id}}" hx-target="#main" hx-swap="outerHTML" hx-push-url="/client/{{id}}"
+	class="flex flex-col w-full h-full gap-6 items-center"
+>
 	<label for="first_name" class="flex flex-col"> First name
 		<input value={{first_name}} class="border rounded-md border-sky-300 active:broder-blue-700" type="text"
 			name="first_name" required />
