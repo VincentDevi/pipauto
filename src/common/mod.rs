@@ -3,6 +3,7 @@ pub mod car;
 mod email;
 pub mod intervention;
 mod phone;
+mod record;
 mod year;
 
 pub use address::*;
