@@ -24,6 +24,7 @@ pub async fn handler_get_client(
     let repositoty = Repository::new(&db);
     let client_detail = repositoty.get_client(&id).await?;
     let template = ClientTemplatePage {
+        id: client_detail.id().id(),
         full_name: client_detail.full_name(),
     };
 
@@ -33,12 +34,14 @@ pub async fn handler_get_client(
 #[derive(Template)]
 #[template(path = "client.html")]
 pub struct ClientTemplatePage {
+    id: String,
     full_name: String,
 }
 
 #[derive(Template)]
 #[template(path = "client_details_page.html")]
 pub struct ClientDetailsTemplatePage {
+    id: String,
     full_name: String,
 }
 
@@ -223,6 +226,7 @@ pub async fn handler_client_create(
     let new_client_record = repository.create_client(form_data.into()).await?;
 
     let template = ClientDetailsTemplatePage {
+        id: new_client_record.id().id(),
         full_name: new_client_record.full_name(),
     };
 
@@ -276,10 +280,11 @@ pub async fn handler_update_client(
     let db = state.read().await.db.lock().await.clone();
     let client_record_id: RecordId = ClientRecordId::new(&id).into();
     let repository = Repository::new(&db);
-    let updated_client = repository
+    let updated_client: Client = repository
         .update_client(client_record_id, form_data)
         .await?;
     let template = ClientDetailsTemplatePage {
+        id: updated_client.id().id(),
         full_name: updated_client.full_name(),
     };
     Ok(Html(template.render()?))
@@ -312,6 +317,55 @@ pub struct UpdateClientTemplate {
     phone: Option<String>,
     email: Option<String>,
 }
+
+pub async fn handler_client_tab_details(
+    State(state): State<SharedState>,
+    Path(id): Path<String>,
+) -> Result<impl IntoResponse, HandlerError> {
+    let db = state.read().await.db.lock().await.clone();
+    let repository = Repository::new(&db);
+    let client = repository.get_client(&id).await?;
+    let template = ClientTabDetailTemplate {
+        first_name: client.first_name(),
+        last_name: client.last_name(),
+        address: client.address().to_string(),
+        phone: client.phone().map(|x| x.to_string()),
+        email: client.email().map(|x| x.to_string()),
+    };
+    Ok(Html(template.render()?))
+}
+
+#[derive(Template)]
+#[template(path = "client_tab_details.html")]
+pub struct ClientTabDetailTemplate {
+    first_name: String,
+    last_name: String,
+    address: String,
+    phone: Option<String>,
+    email: Option<String>,
+}
+
+pub async fn handler_client_tab_cars(
+    State(_state): State<SharedState>,
+    Path(_id): Path<String>,
+) -> Result<impl IntoResponse, HandlerError> {
+    Ok(Html(ClientTabCarsTemplate.render()?))
+}
+
+#[derive(Template)]
+#[template(path = "client_tab_cars.html")]
+pub struct ClientTabCarsTemplate;
+
+pub async fn handler_client_tab_history(
+    State(_state): State<SharedState>,
+    Path(_id): Path<String>,
+) -> Result<impl IntoResponse, HandlerError> {
+    Ok(Html(ClientTabHistoryTemplate.render()?))
+}
+
+#[derive(Template)]
+#[template(path = "client_tab_history.html")]
+pub struct ClientTabHistoryTemplate;
 
 /// Serde deserialization decorator to map empty Strings to None,
 fn empty_string_as_none<'de, D, T>(de: D) -> Result<Option<T>, D::Error>

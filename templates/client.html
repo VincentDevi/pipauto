@@ -8,4 +8,6 @@ Pipauto-client
 
 {% include "client_details_page.html" %}
 
+<div id="tab-content" hx-get="/client/{{id}}/details" hx-trigger="load delay:100ms"></div>
+
 {% endblock %}
