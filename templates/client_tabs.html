@@ -1,0 +1,18 @@
+<nav class="w-full h-16 flex items-center gap-4 border-y-2" role="tablist">
+
+	<button class="cursor-pointer" hx-swap="outerHTML" hx-trigger="click" hx-target="#tab-content"
+		hx-get="/client/{{id}}/details" role="tab">
+		Details
+	</button>
+
+	<button class="cursor-pointer" hx-swap="outerHTML" hx-trigger="click" hx-target="#tab-content"
+		hx-get="/client/{{id}}/cars" role="tab">
+		Cars
+	</button>
+
+	<button class="cursor-pointer" hx-swap="outerHTML" hx-trigger="click" hx-target="#tab-content"
+		hx-get="/client/{{id}}/history" role="tab">
+		History
+	</button>
+
+</nav>
