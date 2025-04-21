@@ -1,8 +1,9 @@
 use super::super::SharedState;
 
 use crate::{
+    common::{ClientRecordId, Records},
     entity::Client,
-    repositoty::{CreateClientEntity, Repository},
+    repositoty::Repository,
 };
 use askama::Template;
 use axum::{
@@ -12,6 +13,7 @@ use axum::{
 };
 use serde::{Deserialize, Deserializer, de};
 use std::{fmt, str::FromStr};
+use surrealdb::RecordId;
 
 use super::error::*;
 pub async fn handler_get_client(
@@ -205,7 +207,9 @@ pub async fn handler_client_create(
     let new_client_record_id = repository.create_client(form_data.into()).await?;
     let id =
         new_client_record_id.ok_or(HandlerError::Parsing("cannot create client".to_string()))?;
-    Ok(Redirect::to(&format!("client/{}", id)))
+
+    let okok: ClientRecordId = id.try_into().map_err(HandlerError::Parsing)?;
+    Ok(Redirect::to(&format!("client/{}", okok.id())))
 }
 
 #[derive(Debug, Deserialize)]
@@ -245,6 +249,33 @@ pub async fn handler_update_client_page(
         phone: client.phone().map(|x| x.to_string()),
     };
     Ok(Html(template.render()?))
+}
+
+pub async fn handler_update_client(
+    State(state): State<SharedState>,
+    Path(id): Path<String>,
+    Form(form_data): Form<UpdateClient>,
+) -> Result<impl IntoResponse, HandlerError> {
+    let db = state.read().await.db.lock().await.clone();
+    let client_record_id: RecordId = ClientRecordId::new(&id).into();
+    let repository = Repository::new(&db);
+    let _ = repository
+        .update_client(client_record_id, form_data)
+        .await?;
+    Ok(Redirect::to(&format!("client/{}", id)))
+}
+
+#[derive(Debug, Deserialize)]
+pub struct UpdateClient {
+    pub first_name: String,
+    pub last_name: String,
+    #[serde(default, deserialize_with = "empty_string_as_none")]
+    pub phone: Option<String>,
+    #[serde(default, deserialize_with = "empty_string_as_none")]
+    pub email: Option<String>,
+    pub address: String,
+    #[serde(default, deserialize_with = "empty_string_as_none")]
+    pub car: Option<String>,
 }
 
 #[derive(Template)]

@@ -4,6 +4,8 @@ pub trait Records {
     fn table(&self) -> String;
 
     fn id(&self) -> String;
+
+    fn new(id: &str) -> Self;
 }
 
 #[derive(Debug, Clone)]
@@ -19,6 +21,13 @@ impl Records for ClientRecordId {
 
     fn id(&self) -> String {
         self.id.clone()
+    }
+
+    fn new(id: &str) -> Self {
+        Self {
+            table: "client".to_string(),
+            id: id.to_string(),
+        }
     }
 }
 

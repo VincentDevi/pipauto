@@ -10,7 +10,7 @@ impl Repository {
         let mut response = self.db.query(query).await?;
         let result: Vec<ModelClient> = response.take(0)?;
         let client = result
-            .get(0)
+            .first()
             .cloned()
             .ok_or(RepositoryError::DatabaseError)?;
         Ok(client.into())
