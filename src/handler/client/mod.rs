@@ -1,27 +1,45 @@
 use super::super::SharedState;
 
 use crate::{
+    common::{ClientRecordId, Records},
     entity::Client,
-    repositoty::{CreateClientEntity, Repository},
+    repositoty::Repository,
 };
 use askama::Template;
 use axum::{
     Form,
-    extract::{Json, Path, State},
-    response::{Html, IntoResponse, Redirect},
+    extract::{Path, State},
+    response::{Html, IntoResponse},
 };
 use serde::{Deserialize, Deserializer, de};
 use std::{fmt, str::FromStr};
+use surrealdb::RecordId;
 
 use super::error::*;
 pub async fn handler_get_client(
     State(state): State<SharedState>,
     id: Path<String>,
-) -> Result<Json<Client>, HandlerError> {
+) -> Result<impl IntoResponse, HandlerError> {
     let db = state.read().await.db.lock().await.clone();
     let repositoty = Repository::new(&db);
-    let client_detail = repositoty.get_client(id.to_string()).await?;
-    Ok(Json(client_detail))
+    let client_detail = repositoty.get_client(&id).await?;
+    let template = ClientTemplatePage {
+        full_name: client_detail.full_name(),
+    };
+
+    Ok(Html(template.render()?))
+}
+
+#[derive(Template)]
+#[template(path = "client.html")]
+pub struct ClientTemplatePage {
+    full_name: String,
+}
+
+#[derive(Template)]
+#[template(path = "client_details_page.html")]
+pub struct ClientDetailsTemplatePage {
+    full_name: String,
 }
 
 pub async fn handler_fetch_clients(
@@ -68,7 +86,7 @@ struct ClientTemp {
 impl From<Client> for ClientTemp {
     fn from(value: Client) -> Self {
         Self {
-            name: value.name(),
+            name: value.full_name(),
             address: value.address().to_string(),
             phone: value.phone().map(|x| x.to_string()),
             email: value.email().map(|x| x.to_string()),
@@ -202,10 +220,13 @@ pub async fn handler_client_create(
 ) -> Result<impl IntoResponse, HandlerError> {
     let db = state.read().await.db.lock().await.clone();
     let repository = Repository::new(&db);
-    let new_client_record_id = repository.create_client(form_data.into()).await?;
-    let id =
-        new_client_record_id.ok_or(HandlerError::Parsing("cannot create client".to_string()))?;
-    Ok(Redirect::to(&format!("client/{}", id)))
+    let new_client_record = repository.create_client(form_data.into()).await?;
+
+    let template = ClientDetailsTemplatePage {
+        full_name: new_client_record.full_name(),
+    };
+
+    Ok(Html(template.render()?))
 }
 
 #[derive(Debug, Deserialize)]
@@ -227,9 +248,70 @@ pub async fn handler_create_client_page(
     Ok(Html(CreateClientTemplate.render()?))
 }
 
+pub async fn handler_update_client_page(
+    State(state): State<SharedState>,
+    Path(id): Path<String>,
+) -> Result<impl IntoResponse, HandlerError> {
+    let db = state.read().await.db.lock().await.clone();
+
+    let repository = Repository::new(&db);
+    let client = repository.get_client(&id).await?;
+
+    let template = UpdateClientTemplate {
+        id,
+        first_name: client.first_name(),
+        last_name: client.last_name(),
+        address: client.address().to_string(),
+        email: client.email().map(|x| x.to_string()),
+        phone: client.phone().map(|x| x.to_string()),
+    };
+    Ok(Html(template.render()?))
+}
+
+pub async fn handler_update_client(
+    State(state): State<SharedState>,
+    Path(id): Path<String>,
+    Form(form_data): Form<UpdateClient>,
+) -> Result<impl IntoResponse, HandlerError> {
+    let db = state.read().await.db.lock().await.clone();
+    let client_record_id: RecordId = ClientRecordId::new(&id).into();
+    let repository = Repository::new(&db);
+    let updated_client = repository
+        .update_client(client_record_id, form_data)
+        .await?;
+    let template = ClientDetailsTemplatePage {
+        full_name: updated_client.full_name(),
+    };
+    Ok(Html(template.render()?))
+}
+
+#[derive(Debug, Deserialize)]
+pub struct UpdateClient {
+    pub first_name: String,
+    pub last_name: String,
+    #[serde(default, deserialize_with = "empty_string_as_none")]
+    pub phone: Option<String>,
+    #[serde(default, deserialize_with = "empty_string_as_none")]
+    pub email: Option<String>,
+    pub address: String,
+    #[serde(default, deserialize_with = "empty_string_as_none")]
+    pub car: Option<String>,
+}
+
 #[derive(Template)]
 #[template(path = "client_create.html")]
 pub struct CreateClientTemplate;
+
+#[derive(Template)]
+#[template(path = "client_update.html")]
+pub struct UpdateClientTemplate {
+    id: String,
+    first_name: String,
+    last_name: String,
+    address: String,
+    phone: Option<String>,
+    email: Option<String>,
+}
 
 /// Serde deserialization decorator to map empty Strings to None,
 fn empty_string_as_none<'de, D, T>(de: D) -> Result<Option<T>, D::Error>

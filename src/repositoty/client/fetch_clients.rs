@@ -36,7 +36,10 @@ impl Repository {
         let result: Vec<ModelClient> = response.take(0)?;
         let count: Option<u32> = response.take(1)?;
 
-        let fetched_clients = result.into_iter().map(|x| x.into()).collect();
+        let fetched_clients: Vec<Client> = result
+            .into_iter()
+            .filter_map(|x| x.try_into().ok())
+            .collect();
 
         Ok((fetched_clients, count.unwrap_or_default()))
     }

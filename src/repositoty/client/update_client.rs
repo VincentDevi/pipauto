@@ -1,24 +1,32 @@
 use serde::{Deserialize, Serialize};
-use surrealdb::RecordId;
+use surrealdb::{RecordId, opt::PatchOp};
 
 use crate::{
     entity::Client,
-    handler::client::CreateClient,
+    handler::client::UpdateClient,
     repositoty::{RepositoryError, model::ModelClient},
 };
 
 use super::super::Repository;
 
 impl Repository {
-    pub async fn create_client(
+    pub async fn update_client(
         &self,
-        form_data: CreateClientEntity,
+        client_id: RecordId,
+        form_data: UpdateClient,
     ) -> Result<Client, RepositoryError> {
-        let create_client_model: CreateClientModel = form_data.into();
+        let update_client_model: UpdateClientEntity = form_data.into();
         let record: Option<ModelClient> = self
             .db
-            .create("client")
-            .content(create_client_model)
+            .update(client_id)
+            .patch(PatchOp::replace(
+                "first_name",
+                update_client_model.first_name,
+            ))
+            .patch(PatchOp::replace("last_name", update_client_model.last_name))
+            .patch(PatchOp::replace("address", update_client_model.address))
+            .patch(PatchOp::replace("phone", update_client_model.phone))
+            .patch(PatchOp::replace("email", update_client_model.email))
             .await?;
         Ok(record
             .ok_or(RepositoryError::DatabaseError)?
@@ -28,7 +36,7 @@ impl Repository {
 }
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
-pub struct CreateClientEntity {
+pub struct UpdateClientEntity {
     first_name: String,
     last_name: String,
     address: String,
@@ -37,8 +45,8 @@ pub struct CreateClientEntity {
     car: Option<RecordId>,
 }
 
-impl From<CreateClient> for CreateClientEntity {
-    fn from(value: CreateClient) -> Self {
+impl From<UpdateClient> for UpdateClientEntity {
+    fn from(value: UpdateClient) -> Self {
         Self {
             first_name: value.first_name,
             last_name: value.last_name,
@@ -51,7 +59,7 @@ impl From<CreateClient> for CreateClientEntity {
 }
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
-pub struct CreateClientModel {
+pub struct UpdateClientModel {
     first_name: String,
     last_name: String,
     address: String,
@@ -60,8 +68,8 @@ pub struct CreateClientModel {
     //    car: Option<RecordId>,
 }
 
-impl From<CreateClientEntity> for CreateClientModel {
-    fn from(value: CreateClientEntity) -> Self {
+impl From<UpdateClientEntity> for UpdateClientModel {
+    fn from(value: UpdateClientEntity) -> Self {
         Self {
             first_name: value.first_name,
             last_name: value.last_name,
