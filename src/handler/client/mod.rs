@@ -1,5 +1,4 @@
 use super::super::SharedState;
-
 use crate::{
     common::{ClientRecordId, Records},
     entity::Client,
