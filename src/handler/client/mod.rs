@@ -1,7 +1,6 @@
 use super::super::SharedState;
-
 use crate::{
-    common::{ClientRecordId, Records},
+    common::{Address, ClientRecordId, Records},
     entity::Client,
     repositoty::Repository,
 };
@@ -328,7 +327,10 @@ pub async fn handler_client_tab_details(
     let template = ClientTabDetailTemplate {
         first_name: client.first_name(),
         last_name: client.last_name(),
-        address: client.address().to_string(),
+        country: client.address().country(),
+        street: client.address().street(),
+        postal: client.address().postal(),
+        number: client.address().number(),
         phone: client.phone().map(|x| x.to_string()),
         email: client.email().map(|x| x.to_string()),
     };
@@ -340,7 +342,10 @@ pub async fn handler_client_tab_details(
 pub struct ClientTabDetailTemplate {
     first_name: String,
     last_name: String,
-    address: String,
+    country: String,
+    street: String,
+    number: String,
+    postal: String,
     phone: Option<String>,
     email: Option<String>,
 }

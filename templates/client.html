@@ -5,9 +5,14 @@ Pipauto-client
 {% endblock %}
 
 {% block content %}
+<div class="w-full h-full flex flex-col p-2">
+<div class="h-16">
+	<h2 class="flex-grow w-full px-4 pb-6 pt-4 text-2xl text-left"> {{full_name}} </h2>
+</div>
 
-{% include "client_details_page.html" %}
+{% include "client_tabs.html" %}
 
-<div id="tab-content" hx-get="/client/{{id}}/details" hx-trigger="load delay:100ms"></div>
+<div id="tab-content" hx-get="/client/{{id}}/details" hx-trigger="load delay:100ms" hx-swap="outerHTML"></div>
+</div>
 
 {% endblock %}
