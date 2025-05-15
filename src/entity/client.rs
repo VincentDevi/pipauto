@@ -23,7 +23,7 @@ impl TryFrom<ModelClient> for Client {
             first_name: client.first_name(),
             last_name: client.last_name(),
             full_name: format!("{} {}", client.first_name(), client.last_name()),
-            address: Address::new(client.address()),
+            address: client.address().into(),
             phone: client.phone().map(Phone::new),
             email: client.email().map(Email::new),
         })
