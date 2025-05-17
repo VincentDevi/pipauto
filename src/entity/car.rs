@@ -5,7 +5,7 @@ use crate::{
     repositoty::model::{ModelCar, ModelFuel},
 };
 
-use super::super::common::car::*;
+use super::{super::common::car::*, Intervention};
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Car {
@@ -18,6 +18,7 @@ pub struct Car {
     oil_quantity: OilQuantity,
     oil_type: OilType,
     year: Year,
+    interventions: Intervention,
 }
 
 impl From<ModelCar> for Car {
@@ -36,6 +37,7 @@ impl From<ModelCar> for Car {
             oil_quantity: OilQuantity::new(car.oil_quantity()),
             oil_type: OilType::new(car.oil_type()),
             year: Year::new(car.year()),
+            interventions: car.interventions().into(),
         }
     }
 }
