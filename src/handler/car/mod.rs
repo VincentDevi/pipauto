@@ -16,7 +16,7 @@ pub async fn handler_get_car(
 ) -> Result<Json<Car>, HandlerError> {
     let db = state.read().await.db.lock().await.clone();
     let repository = Repository::new(&db);
-    let car_details = repository.get_car(id.to_string()).await?;
+    let car_details = repository.get_car(id.to_string(), None).await?;
     Ok(Json(car_details))
 }
 
