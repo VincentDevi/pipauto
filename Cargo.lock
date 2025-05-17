@@ -2438,6 +2438,7 @@ dependencies = [
  "derive_more",
  "faker_rand",
  "rand 0.8.5",
+ "rust_decimal",
  "rusty-money",
  "serde",
  "serde_json",
