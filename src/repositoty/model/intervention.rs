@@ -2,6 +2,8 @@ use surrealdb::{Datetime, RecordId};
 
 #[derive(Debug, Clone)]
 pub struct ModelIntervertion {
+    id: RecordId,
+    client: RecordId,
     car_id: RecordId,
     price: f64,
     mileage: f64,
