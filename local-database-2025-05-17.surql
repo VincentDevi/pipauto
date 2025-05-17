@@ -42,12 +42,33 @@ INSERT { brand: 'nissan', cc: 0.9dec, client_id: client:xql8n6t1ude79zed6i5z, cr
 COMMIT;
 
 -- ------------------------------
+-- TABLE: car_owner_history
+-- ------------------------------
+
+DEFINE TABLE car_owner_history TYPE NORMAL SCHEMAFULL PERMISSIONS NONE;
+
+DEFINE FIELD car ON car_owner_history TYPE record<car> PERMISSIONS FULL;
+DEFINE FIELD client ON car_owner_history TYPE record<client> PERMISSIONS FULL;
+DEFINE FIELD created_at ON car_owner_history TYPE datetime DEFAULT time::now() PERMISSIONS FULL;
+
+
+
+-- ------------------------------
+-- TABLE DATA: car_owner_history
+-- ------------------------------
+
+
+-- ------------------------------
 -- TABLE: client
 -- ------------------------------
 
 DEFINE TABLE client TYPE NORMAL SCHEMAFULL PERMISSIONS NONE;
 
-DEFINE FIELD address ON client TYPE string PERMISSIONS FULL;
+DEFINE FIELD address ON client TYPE object PERMISSIONS FULL;
+DEFINE FIELD address.country ON client TYPE string PERMISSIONS FULL;
+DEFINE FIELD address.number ON client TYPE string PERMISSIONS FULL;
+DEFINE FIELD address.postal ON client TYPE string PERMISSIONS FULL;
+DEFINE FIELD address.street ON client TYPE string PERMISSIONS FULL;
 DEFINE FIELD created_at ON client TYPE datetime DEFAULT time::now() PERMISSIONS FULL;
 DEFINE FIELD email ON client TYPE option<string> DEFAULT NONE PERMISSIONS FULL;
 DEFINE FIELD first_name ON client TYPE string PERMISSIONS FULL;
@@ -62,11 +83,9 @@ DEFINE INDEX client_full_name ON client FIELDS full_name SEARCH ANALYZER client_
 DEFINE INDEX client_last_name ON client FIELDS last_name SEARCH ANALYZER client_analyzer BM25(1.2,0.75) DOC_IDS_ORDER 100 DOC_LENGTHS_ORDER 100 POSTINGS_ORDER 100 TERMS_ORDER 100 DOC_IDS_CACHE 100 DOC_LENGTHS_CACHE 100 POSTINGS_CACHE 100 TERMS_CACHE 100;
 DEFINE INDEX client_phone ON client FIELDS phone SEARCH ANALYZER client_analyzer BM25(1.2,0.75) DOC_IDS_ORDER 100 DOC_LENGTHS_ORDER 100 POSTINGS_ORDER 100 TERMS_ORDER 100 DOC_IDS_CACHE 100 DOC_LENGTHS_CACHE 100 POSTINGS_CACHE 100 TERMS_CACHE 100;
 
-DEFINE EVENT OVERWRITE full_name ON TABLE client 
-WHEN $event = "CREATE" OR ($event = "UPDATE" AND ($before.first_name != $after.first_name OR $before.last_name != $after.last_name))
-THEN {
-    LET $new_full_name = string::concat($after.first_name, ' ', $after.last_name);
-    UPDATE $after.id SET full_name = $new_full_name;
+DEFINE EVENT full_name ON client WHEN $event = 'CREATE' OR ($event = 'UPDATE' AND ($before.first_name != $after.first_name OR $before.last_name != $after.last_name)) THEN {
+LET $new_full_name = string::concat($after.first_name, ' ', $after.last_name);
+UPDATE $after.id SET full_name = $new_full_name;
 };
 
 -- ------------------------------
@@ -74,11 +93,21 @@ THEN {
 -- ------------------------------
 
 BEGIN;
-INSERT { address: 'Liège', created_at: d'2025-04-14T21:49:29.885Z', first_name: 'oki', full_name: 'oki peout', id: client:6wre2175do2lwm1dp6re, last_name: 'peout', updated_at: d'2025-04-14T21:49:29.885Z' } VERSION d'2025-04-14T21:49:43.139604212Z';
-INSERT { address: 'Liège', created_at: d'2025-04-05T00:09:05.838Z', first_name: 'Tamèrede', full_name: 'Tamèrede Lapute', id: client:8pe1chh27xynh0d8ml8y, last_name: 'Lapute', updated_at: d'2025-04-05T00:09:05.838Z' } VERSION d'2025-04-14T21:37:07.595304377Z';
-INSERT { address: 'Paris', created_at: d'2025-04-05T00:08:48.778Z', first_name: 'Patricks', full_name: 'Patricks Fiory', id: client:icbxobm75z570rmbdj9z, last_name: 'Fiory', updated_at: d'2025-04-05T00:08:48.778Z' } VERSION d'2025-04-14T21:37:42.493984879Z';
-INSERT { address: 'Charleroi', created_at: d'2025-04-05T00:08:34.621Z', first_name: 'Vinz', full_name: 'Vinz Devilers', id: client:pbc0t540l03qmukxt20d, last_name: 'Devilers', updated_at: d'2025-04-05T00:08:34.621Z' } VERSION d'2025-04-14T21:45:38.041654752Z';
-INSERT { address: 'Charleroi', created_at: d'2025-04-04T23:49:08.343295Z', first_name: 'Hugo', full_name: 'Hugo Bohy', id: client:xql8n6t1ude79zed6i5z, last_name: 'Bohy', updated_at: d'2025-04-04T23:49:08.343299Z' } VERSION d'2025-04-14T21:37:07.595304377Z';
+INSERT { address: { country: 'Belgium', number: '177', postal: '6061', street: 'Rue de la paix' }, created_at: d'2025-04-17T22:01:55.289Z', first_name: 'Hugo-Antoinette', full_name: 'Hugo-Antoinette je-sais', id: client:2favq3j60bybfv7211b2, last_name: 'je-sais', updated_at: d'2025-04-17T22:01:55.289Z' } VERSION d'2025-04-29T17:26:35.244963250Z';
+INSERT { address: { country: 'Belgium', number: '177', postal: '6061', street: 'Rue de la paix' }, created_at: d'2025-04-21T11:50:51.679578043Z', first_name: 'un', full_name: 'un deux', id: client:4v1t7riysqnqnucx01rt, last_name: 'deux', updated_at: d'2025-04-21T11:50:51.679876001Z' } VERSION d'2025-04-29T17:33:21.599268299Z';
+INSERT { address: { country: 'Belgium', number: '177', postal: '6061', street: 'Rue de la paix' }, created_at: d'2025-04-21T12:23:29.666732630Z', first_name: 'alkjzhekh', full_name: 'alkjzhekh mama', id: client:5oto5yrchbsp64tj8qqd, last_name: 'mama', updated_at: d'2025-04-21T12:23:29.667010838Z' } VERSION d'2025-04-29T17:33:21.599268299Z';
+INSERT { address: { country: 'Belgium', number: '177', postal: '6061', street: 'Rue de la paix' }, created_at: d'2025-04-14T21:49:29.885Z', first_name: 'oki', full_name: 'oki peout', id: client:6wre2175do2lwm1dp6re, last_name: 'peout', updated_at: d'2025-04-14T21:49:29.885Z' } VERSION d'2025-04-29T17:33:21.599268299Z';
+INSERT { address: { country: 'Belgium', number: '177', postal: '6061', street: 'Rue de la paix' }, created_at: d'2025-04-05T00:09:05.838Z', first_name: 'Tamèrede', full_name: 'Tamèrede Lapute', id: client:8pe1chh27xynh0d8ml8y, last_name: 'Lapute', updated_at: d'2025-04-05T00:09:05.838Z' } VERSION d'2025-04-29T17:33:21.599268299Z';
+INSERT { address: { country: 'Belgium', number: '177', postal: '6061', street: 'Rue de la paix' }, created_at: d'2025-04-21T12:26:23.182420168Z', first_name: 'bbbb', full_name: 'bbbb ccccc', id: client:cbv5co545pzv7teef7qz, last_name: 'ccccc', updated_at: d'2025-04-21T12:26:23.182560126Z' } VERSION d'2025-04-29T17:33:21.599268299Z';
+INSERT { address: { country: 'Belgium', number: '177', postal: '6061', street: 'Rue de la paix' }, created_at: d'2025-04-05T00:08:48.778Z', first_name: 'Patricks', full_name: 'Patricks Fiory', id: client:icbxobm75z570rmbdj9z, last_name: 'Fiory', updated_at: d'2025-04-05T00:08:48.778Z' } VERSION d'2025-04-29T17:33:21.599268299Z';
+INSERT { address: { country: 'Belgium', number: '177', postal: '6061', street: 'Rue de la paix' }, created_at: d'2025-04-21T11:51:14.883917262Z', first_name: 'toi', full_name: 'toi moi', id: client:inz0y843t5ig9teenl6u, last_name: 'moi', updated_at: d'2025-04-21T11:51:14.884003345Z' } VERSION d'2025-04-29T17:33:21.599268299Z';
+INSERT { address: { country: 'Belgium', number: '177', postal: '6061', street: 'Rue de la paix' }, created_at: d'2025-04-05T00:08:34.621Z', first_name: 'Vinz', full_name: 'Vinz Devilers', id: client:pbc0t540l03qmukxt20d, last_name: 'Devilers', updated_at: d'2025-04-05T00:08:34.621Z' } VERSION d'2025-04-29T17:33:21.599268299Z';
+INSERT { address: { country: 'Belgium', number: '177', postal: '6061', street: 'Rue de la paix' }, created_at: d'2025-04-21T12:23:55.873327128Z', first_name: 'test final ', full_name: "test final  c'est la bonne ", id: client:sxiaujao6ukvi1e48366, last_name: "c'est la bonne ", updated_at: d'2025-04-21T12:23:55.873491836Z' } VERSION d'2025-04-29T17:33:21.599268299Z';
+INSERT { address: { country: 'Belgium', number: '177', postal: '6061', street: 'Rue de la paix' }, created_at: d'2025-04-19T07:32:12.189345919Z', email: 'mdevilers@skynet.be', first_name: 'azkheblakbrkalb', full_name: 'azkheblakbrkalb lkhkahzgelhajkgrhj', id: client:tw1rlqv7cckfee0tpvso, last_name: 'lkhkahzgelhajkgrhj', phone: '213456', updated_at: d'2025-04-19T07:32:12.189568460Z' } VERSION d'2025-04-29T17:33:21.599268299Z';
+INSERT { address: { country: 'Belgium', number: '177', postal: '6061', street: 'Rue de la paix' }, created_at: d'2025-04-21T12:24:37.368182717Z', first_name: 'final du final', full_name: 'final du final wallah', id: client:u7q2bmqckg410qrf5ww1, last_name: 'wallah', updated_at: d'2025-04-21T12:24:37.368273175Z' } VERSION d'2025-04-29T17:33:21.599268299Z';
+INSERT { address: { country: 'Belgium', number: '177', postal: '6061', street: 'Rue de la paix' }, created_at: d'2025-04-17T22:02:33.896908590Z', first_name: 'aoizehiagroigar', full_name: 'aoizehiagroigar mama', id: client:ueksy4qka2eq2n2p4t5c, last_name: 'mama', updated_at: d'2025-04-17T22:02:33.897287590Z' } VERSION d'2025-04-29T17:33:21.599268299Z';
+INSERT { address: { country: 'Belgium', number: '177', postal: '6061', street: 'Rue de la paix' }, created_at: d'2025-04-04T23:49:08.343295Z', first_name: 'Hugo', full_name: 'Hugo Bohy', id: client:xql8n6t1ude79zed6i5z, last_name: 'Bohy', updated_at: d'2025-04-04T23:49:08.343299Z' } VERSION d'2025-04-29T17:33:21.599268299Z';
+INSERT { address: { country: 'Belgium', number: '177', postal: '6061', street: 'Rue de la paix' }, created_at: d'2025-04-21T12:26:11.599457469Z', first_name: 'aaaaa', full_name: 'aaaaa vvvvv', id: client:xyrxj05ck9fhwzfo08x9, last_name: 'vvvvv', updated_at: d'2025-04-21T12:26:11.599641094Z' } VERSION d'2025-04-29T17:33:21.599268299Z';
 COMMIT;
 
 -- ------------------------------
@@ -88,6 +117,7 @@ COMMIT;
 DEFINE TABLE intervention TYPE NORMAL SCHEMAFULL PERMISSIONS NONE;
 
 DEFINE FIELD car_id ON intervention TYPE record<car> PERMISSIONS FULL;
+DEFINE FIELD client ON intervention TYPE record<client> PERMISSIONS FULL;
 DEFINE FIELD created_at ON intervention TYPE datetime DEFAULT time::now() PERMISSIONS FULL;
 DEFINE FIELD intervention_date ON intervention TYPE datetime PERMISSIONS FULL;
 DEFINE FIELD intervention_type ON intervention FLEXIBLE TYPE { Maintenance: { filter_air: bool, filter_cabin: bool, filter_gasoil: bool, filter_oil: bool, spark_plug: bool } } | 'Repair' PERMISSIONS FULL;
