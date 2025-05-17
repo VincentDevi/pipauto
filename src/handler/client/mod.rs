@@ -359,7 +359,23 @@ pub async fn handler_client_tab_cars(
 
 #[derive(Template)]
 #[template(path = "client_tab_cars.html")]
-pub struct ClientTabCarsTemplate;
+pub struct ClientTabCarsTemplate {
+    brand: String,
+    model: String,
+    cc: String,
+    fuel: String,
+    year: String,
+    oil_quantity: String,
+    oil_type: String,
+    interventions: Vec<ClientTabCarIntervention>,
+}
+
+pub struct ClientTabCarIntervention {
+    intervention_type: String,
+    amount: String,
+    milage: String,
+    date: String,
+}
 
 pub async fn handler_client_tab_history(
     State(_state): State<SharedState>,
