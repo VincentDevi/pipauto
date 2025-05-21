@@ -34,10 +34,11 @@ DEFINE FIELD zip_code   ON TABLE client TYPE string;
 
 ## Relationships
 
-    - **Owns Cars**: A client is linked to one or more records in the car table. Each car has a client field pointing back to its owner.
-    - **Indirect Interventions**: Through the cars they own, clients are also connected to intervention records. While interventions do not link directly to clients, they relate to cars, which are in turn owned by clients.
+- **Owns Cars**: A client is linked to one or more records in the car table. Each car has a client field pointing back to its owner.
+- **Indirect Interventions**: Through the cars they own, clients are also connected to intervention records. While interventions do not link directly to clients, they relate to cars, which are in turn owned by clients.
 
 ## Notes
-    - The `email` field is optional to support clients who do not provide one.
-    - All other fields are mandatory to ensure complete client contact and location information.
-    - Clients are central to the app's functionality and should be managed with care, as deleting a client may orphan related car and intervention data unless cascade mechanisms are defined.
+
+- The `email` field is optional to support clients who do not provide one.
+- All other fields are mandatory to ensure complete client contact and location information.
+- Clients are central to the app's functionality and should be managed with care, as deleting a client may orphan related car and intervention data unless cascade mechanisms are defined.
