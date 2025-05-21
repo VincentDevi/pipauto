@@ -1,36 +1,39 @@
 # `Client` Table
 
-The `client` table stores information about individuals or entities that own one or more vehicles and request interventions (repairs or maintenance) on them.
-This is a central table in the Pipauto application, linking clients to their cars and the interventions performed on those cars.
+The `client` table stores information about individuals who are customers of the car repair service. This includes identity, contact details, and metadata for indexing and search optimization. It is a key entity in the application, as clients are linked to their vehicles and interventions.
 
-## Schema
-```
-DEFINE TABLE client SCHEMAFULL PERMISSIONS
-    FOR select, create, update, delete WHERE true;
-
-DEFINE FIELD id        ON TABLE client TYPE record<client>;
-DEFINE FIELD first_name ON TABLE client TYPE string;
-DEFINE FIELD last_name  ON TABLE client TYPE string;
-DEFINE FIELD email      ON TABLE client TYPE option<string>;
-DEFINE FIELD phone      ON TABLE client TYPE string;
-DEFINE FIELD address    ON TABLE client TYPE string;
-DEFINE FIELD city       ON TABLE client TYPE string;
-DEFINE FIELD zip_code   ON TABLE client TYPE string;
-
-```
 
 ## Fields
 
-| Field        | Type             | Description                              |
-| ------------ | ---------------- | ---------------------------------------- |
-| `id`         | `record<client>` | Unique identifier for the client record. |
-| `first_name` | `string`         | The client’s first name.                 |
-| `last_name`  | `string`         | The client’s last name.                  |
-| `email`      | `option<string>` | Optional email address.                  |
-| `phone`      | `string`         | Phone number of the client.              |
-| `address`    | `string`         | Street address of the client.            |
-| `city`       | `string`         | City of residence.                       |
-| `zip_code`   | `string`         | ZIP or postal code.                      |
+| Field             | Type                | Description                                                                     |
+| ----------------- | ------------------- | ------------------------------------------------------------------------------- |
+| `first_name`      | `string`            | The first name of the client.                                                   |
+| `last_name`       | `string`            | The last name of the client.                                                    |
+| `full_name`       | `string` (computed) | Concatenation of `first_name` and `last_name`. Automatically updated via event. |
+| `email`           | `option<string>`    | Optional email address. Defaults to `NONE`.                                     |
+| `phone`           | `option<string>`    | Optional phone number. Defaults to `NONE`.                                      |
+| `address`         | `object`            | An object containing full address information.                                  |
+| `address.street`  | `string`            | Street name of the client’s address.                                            |
+| `address.number`  | `string`            | Street number.                                                                  |
+| `address.postal`  | `string`            | Postal code.                                                                    |
+| `address.country` | `string`            | Country name.                                                                   |
+| `created_at`      | `datetime`          | Timestamp when the record was created. Defaults to `time::now()`.               |
+| `updated_at`      | `datetime`          | Timestamp when the record was last updated. Defaults to `time::now()`.          |
+
+## Indexes
+
+The following full-text search indexes are defined using a custom analyzer (client_analyzer) to improve lookup efficiency and relevance:
+
+| Index Name          | Field        |
+| ------------------- | ------------ |
+| `client_email`      | `email`      |
+| `client_phone`      | `phone`      |
+| `client_first_name` | `first_name` |
+| `client_last_name`  | `last_name`  |
+| `client_full_name`  | `full_name`  |
+
+All indexes use BM25 ranking and are optimized with caching strategies.
+
 
 ## Relationships
 
@@ -39,6 +42,6 @@ DEFINE FIELD zip_code   ON TABLE client TYPE string;
 
 ## Notes
 
-- The `email` field is optional to support clients who do not provide one.
-- All other fields are mandatory to ensure complete client contact and location information.
-- Clients are central to the app's functionality and should be managed with care, as deleting a client may orphan related car and intervention data unless cascade mechanisms are defined.
+- The client table uses full permissions for all fields, which means read/write access is unrestricted. This may be adjusted later for role-based access.
+- The computed `full_name` ensures consistent display and efficient search.
+-All timestamps are managed automatically using SurrealDB's `time::now()`.
