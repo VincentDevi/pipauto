@@ -2,7 +2,7 @@ use super::super::SharedState;
 use crate::{
     common::{Address, ClientRecordId, Records},
     entity::Client,
-    repositoty::Repository,
+    repositoty::{CarsFilter, Repository},
 };
 use askama::Template;
 use axum::{
@@ -351,15 +351,27 @@ pub struct ClientTabDetailTemplate {
 }
 
 pub async fn handler_client_tab_cars(
-    State(_state): State<SharedState>,
-    Path(_id): Path<String>,
+    State(state): State<SharedState>,
+    Path(id): Path<String>,
 ) -> Result<impl IntoResponse, HandlerError> {
-    Ok(Html(ClientTabCarsTemplate.render()?))
+    let db = state.read().await.db.lock().await.clone();
+    let repository = Repository::new(&db);
+    let cars = repository
+        .fetch_cars(None, None, CarsFilter::new(Some(id)))
+        .await?;
+    let template = ClientTabCarsTemplate {
+        cars: cars.into_iter().map(|x| x.into()),
+    };
+    Ok(Html(template.render()?))
 }
 
 #[derive(Template)]
 #[template(path = "client_tab_cars.html")]
 pub struct ClientTabCarsTemplate {
+    cars: Vec<ClientCar>,
+}
+
+pub struct ClientCar {
     brand: String,
     model: String,
     cc: String,
@@ -374,7 +386,7 @@ pub struct ClientTabCarIntervention {
     intervention_type: String,
     amount: String,
     milage: String,
-    date: String,
+    intervention_date: String,
 }
 
 pub async fn handler_client_tab_history(

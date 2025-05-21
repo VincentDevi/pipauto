@@ -21,10 +21,10 @@ impl Repository {
         );
         let mut response = self.db.query(query).await?;
         let result: Vec<ModelCar> = response.take(0)?;
-        let client = result
+        let car = result
             .get(0)
             .cloned()
             .ok_or(RepositoryError::DatabaseError)?;
-        Ok(client.into())
+        car.try_into().map_err(RepositoryError::ParsingError)
     }
 }

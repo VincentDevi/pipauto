@@ -28,3 +28,21 @@ impl TryFrom<ModelIntervertion> for Intervention {
         })
     }
 }
+
+impl Intervention {
+    pub fn intervention_date(&self) -> &NaiveDateTime {
+        &self.intervention_date
+    }
+    pub fn price(&self) -> &Price {
+        &self.price
+    }
+    pub fn mileage(&self) -> &Milage {
+        &self.mileage
+    }
+    pub fn remarks(&self) -> &[String] {
+        &self.remarks
+    }
+    pub fn intervention_type(&self) -> &InterventionType {
+        &self.intervention_type
+    }
+}
