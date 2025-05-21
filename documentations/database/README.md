@@ -60,6 +60,8 @@ Stores data about each vehicle, including its specifications and owner.
 
 - Linked to `car_owner_history` entries
 
+---
+
 3. intervention
 Logs each maintenance or repair operation performed on a car.
 
@@ -82,6 +84,8 @@ Logs each maintenance or repair operation performed on a car.
 - Belongs to one `car` 
 
 - Belongs to one `client` 
+
+---
 
 4. car_owner_history
 Records past ownership links between cars and clients.
