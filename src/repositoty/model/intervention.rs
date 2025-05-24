@@ -8,9 +8,9 @@ pub struct ModelIntervertion {
     car_id: RecordId,
     price: f64,
     mileage: f64,
-    remarks: Vec<String>,
+    remark: Vec<String>,
     intervention_date: Datetime,
-    intervention_type: ModelInterventionType,
+    //   intervention_type: ModelInterventionType,
     created_at: Datetime,
     updated_at: Datetime,
 }
@@ -20,7 +20,8 @@ impl ModelIntervertion {
         self.intervention_date.clone()
     }
     pub fn intervention_type(&self) -> ModelInterventionType {
-        self.intervention_type.clone()
+        //        self.intervention_type.clone()
+        ModelInterventionType::Repair
     }
     pub fn created_at(&self) -> Datetime {
         self.created_at.clone()

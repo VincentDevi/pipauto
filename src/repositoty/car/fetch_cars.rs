@@ -18,14 +18,18 @@ impl Repository {
             "SELECT *,(select * from intervention where car_id = $parent.id) as interventions FROM car {} ;",
             filter
         );
+        println!("{query}");
         let mut response = self.db.query(query).await?;
+        println!("reponse : {:?}", response);
         let result: Vec<ModelCar> = response.take(0)?;
-        let fetched_cars: Vec<Car> = result
+        let fetched_cars: Result<Vec<Car>, _> = result
             .into_iter()
             .map(|x| x.try_into())
             .collect::<Result<Vec<Car>, _>>()
-            .map_err(RepositoryError::ParsingError)?;
-        Ok(fetched_cars)
+            .map_err(RepositoryError::ParsingError);
+
+        println!("cars : {:?}", fetched_cars);
+        fetched_cars
     }
 }
 
@@ -48,7 +52,7 @@ impl Display for CarsFilter {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match &self.client {
             None => write!(f, ""),
-            Some(client) => write!(f, " client:{} ", client),
+            Some(client) => write!(f, "where client_id = client:{} ", client),
         }
     }
 }

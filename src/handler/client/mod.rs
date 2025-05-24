@@ -359,21 +359,15 @@ pub async fn handler_client_tab_cars(
 ) -> Result<impl IntoResponse, HandlerError> {
     let db = state.read().await.db.lock().await.clone();
     let repository = Repository::new(&db);
-    let cars = repository
+    let car = repository
         .fetch_cars(None, None, CarsFilter::new(Some(id)))
         .await?;
-    let template = ClientTabCarsTemplate {
-        cars: cars.into_iter().map(|x| x.into()).collect(),
-    };
+    let template: ClientCar = car.first().unwrap().clone().into();
     Ok(Html(template.render()?))
 }
 
 #[derive(Template)]
 #[template(path = "client_tab_cars.html")]
-pub struct ClientTabCarsTemplate {
-    cars: Vec<ClientCar>,
-}
-
 pub struct ClientCar {
     brand: String,
     model: String,
@@ -405,7 +399,7 @@ impl From<Car> for ClientCar {
 }
 
 pub struct ClientTabCarIntervention {
-    intervention_type: InterventionTypeTemplate,
+    intervention_type: String,
     amount: String,
     milage: String,
     intervention_date: String,
@@ -414,7 +408,7 @@ pub struct ClientTabCarIntervention {
 impl From<Intervention> for ClientTabCarIntervention {
     fn from(value: Intervention) -> Self {
         Self {
-            intervention_type: (*value.intervention_type()).into(),
+            intervention_type: value.intervention_type().to_string(),
             amount: value.price().to_string(),
             milage: value.mileage().to_string(),
             intervention_date: value.intervention_date().to_string(),

@@ -50,10 +50,10 @@ impl ModelCar {
         self.oil_quantity.clone()
     }
     pub fn year(&self) -> u32 {
-        self.year.clone()
+        self.year
     }
     pub fn fuel(&self) -> ModelFuel {
-        self.fuel.clone()
+        self.fuel
     }
     pub fn created_at(&self) -> Datetime {
         self.created_at.clone()
