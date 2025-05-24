@@ -1,3 +1,5 @@
+use std::str::FromStr;
+
 use derive_more::Display;
 use rust_decimal::{Decimal, prelude::FromPrimitive};
 use rusty_money::{FormattableCurrency, Money, iso};
@@ -58,6 +60,16 @@ impl TryFrom<f64> for Price {
     fn try_from(value: f64) -> Result<Self, Self::Error> {
         Ok(Self(Money::from_decimal(
             Decimal::from_f64(value).ok_or("cannot parse f64 to Price")?,
+            iso::EUR,
+        )))
+    }
+}
+
+impl TryFrom<String> for Price {
+    type Error = String;
+    fn try_from(value: String) -> Result<Self, Self::Error> {
+        Ok(Self(Money::from_decimal(
+            Decimal::from_str(&value).map_err(|_| "cannot parse from string".to_string())?,
             iso::EUR,
         )))
     }

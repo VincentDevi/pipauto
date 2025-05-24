@@ -1,9 +1,7 @@
-use std::str::FromStr;
-
 use crate::repositoty::model::ModelIntervertion;
 
 use super::super::common::{car::*, intervention::*};
-use chrono::NaiveDateTime;
+use chrono::{DateTime, NaiveDateTime};
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Clone, Deserialize, Serialize)]
@@ -18,13 +16,17 @@ pub struct Intervention {
 impl TryFrom<ModelIntervertion> for Intervention {
     type Error = String;
     fn try_from(value: ModelIntervertion) -> Result<Self, Self::Error> {
+        let date = value.intervention_date().to_string();
+        let s = date.trim_start_matches("d'").trim_end_matches('\'');
+        let date_time =
+            DateTime::parse_from_rfc3339(s).map_err(|_| "error with date parsing".to_string());
+
         Ok(Self {
             intervention_type: value.intervention_type().try_into()?,
             price: value.price().try_into()?,
-            mileage: Milage::new(value.mileage()),
+            mileage: value.mileage().try_into()?,
             remarks: Vec::default(), // this should be fixed later on
-            intervention_date: NaiveDateTime::from_str(&value.intervention_date().to_string())
-                .map_err(|x| x.to_string())?,
+            intervention_date: date_time?.naive_utc(),
         })
     }
 }

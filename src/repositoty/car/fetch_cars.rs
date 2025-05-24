@@ -10,26 +10,21 @@ use super::super::Repository;
 impl Repository {
     pub async fn fetch_cars(
         &self,
-        paging: Option<PagingFilter>,
-        search_text: Option<String>,
+        _paging: Option<PagingFilter>,
+        _search_text: Option<String>,
         filter: CarsFilter,
     ) -> Result<Vec<Car>, RepositoryError> {
         let query = format!(
             "SELECT *,(select * from intervention where car_id = $parent.id) as interventions FROM car {} ;",
             filter
         );
-        println!("{query}");
         let mut response = self.db.query(query).await?;
-        println!("reponse : {:?}", response);
         let result: Vec<ModelCar> = response.take(0)?;
-        let fetched_cars: Result<Vec<Car>, _> = result
+        result
             .into_iter()
             .map(|x| x.try_into())
             .collect::<Result<Vec<Car>, _>>()
-            .map_err(RepositoryError::ParsingError);
-
-        println!("cars : {:?}", fetched_cars);
-        fetched_cars
+            .map_err(RepositoryError::ParsingError)
     }
 }
 

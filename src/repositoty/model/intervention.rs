@@ -6,11 +6,11 @@ pub struct ModelIntervertion {
     id: RecordId,
     client: RecordId,
     car_id: RecordId,
-    price: f64,
-    mileage: f64,
+    price: String,
+    mileage: String,
     remark: Vec<String>,
     intervention_date: Datetime,
-    //   intervention_type: ModelInterventionType,
+    intervention_type: ModelInterventionType,
     created_at: Datetime,
     updated_at: Datetime,
 }
@@ -20,8 +20,7 @@ impl ModelIntervertion {
         self.intervention_date.clone()
     }
     pub fn intervention_type(&self) -> ModelInterventionType {
-        //        self.intervention_type.clone()
-        ModelInterventionType::Repair
+        self.intervention_type.clone()
     }
     pub fn created_at(&self) -> Datetime {
         self.created_at.clone()
@@ -35,11 +34,11 @@ impl ModelIntervertion {
     pub fn car_id(&self) -> RecordId {
         self.car_id.clone()
     }
-    pub fn price(&self) -> f64 {
-        self.price
+    pub fn price(&self) -> String {
+        self.price.clone()
     }
-    pub fn mileage(&self) -> f64 {
-        self.mileage
+    pub fn mileage(&self) -> String {
+        self.mileage.clone()
     }
 }
 
