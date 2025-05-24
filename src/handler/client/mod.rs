@@ -1,8 +1,11 @@
 use super::super::SharedState;
 use crate::{
-    common::{Address, ClientRecordId, Records},
-    entity::Client,
-    repositoty::Repository,
+    common::{
+        Address, ClientRecordId, Records,
+        intervention::{InterventionType, Maintenance},
+    },
+    entity::{Car, Client, Intervention},
+    repositoty::{CarsFilter, Repository},
 };
 use askama::Template;
 use axum::{
@@ -351,15 +354,105 @@ pub struct ClientTabDetailTemplate {
 }
 
 pub async fn handler_client_tab_cars(
-    State(_state): State<SharedState>,
-    Path(_id): Path<String>,
+    State(state): State<SharedState>,
+    Path(id): Path<String>,
 ) -> Result<impl IntoResponse, HandlerError> {
-    Ok(Html(ClientTabCarsTemplate.render()?))
+    let db = state.read().await.db.lock().await.clone();
+    let repository = Repository::new(&db);
+    let car = repository
+        .fetch_cars(None, None, CarsFilter::new(Some(id)))
+        .await?;
+    let template: ClientCar = car.first().unwrap().clone().into();
+    Ok(Html(template.render()?))
 }
 
 #[derive(Template)]
 #[template(path = "client_tab_cars.html")]
-pub struct ClientTabCarsTemplate;
+pub struct ClientCar {
+    brand: String,
+    model: String,
+    cc: String,
+    fuel: String,
+    year: String,
+    oil_quantity: String,
+    oil_type: String,
+    interventions: Vec<ClientTabCarIntervention>,
+}
+
+impl From<Car> for ClientCar {
+    fn from(value: Car) -> Self {
+        Self {
+            brand: value.brand().to_string(),
+            model: value.model().to_string(),
+            cc: value.cc().to_string(),
+            fuel: value.fuel().to_string(),
+            year: value.year().to_string(),
+            oil_quantity: value.oil_quantity().to_string(),
+            oil_type: value.oil_type().to_string(),
+            interventions: value
+                .intervention()
+                .into_iter()
+                .map(|x| x.clone().into())
+                .collect(),
+        }
+    }
+}
+
+pub struct ClientTabCarIntervention {
+    intervention_type: String,
+    amount: String,
+    milage: String,
+    intervention_date: String,
+}
+
+impl From<Intervention> for ClientTabCarIntervention {
+    fn from(value: Intervention) -> Self {
+        Self {
+            intervention_type: value.intervention_type().to_string(),
+            amount: value.price().to_string(),
+            milage: value.mileage().to_string(),
+            intervention_date: value.intervention_date().to_string(),
+        }
+    }
+}
+
+pub struct InterventionTypeTemplate {
+    repair: Option<String>,
+    maintenance: Option<MaintenanceTemplate>,
+}
+
+impl From<InterventionType> for InterventionTypeTemplate {
+    fn from(value: InterventionType) -> Self {
+        match value {
+            InterventionType::Repair => Self {
+                repair: Some("Repair".to_string()),
+                maintenance: None,
+            },
+            InterventionType::Maintenance(maintenance) => Self {
+                repair: None,
+                maintenance: Some(maintenance.into()),
+            },
+        }
+    }
+}
+
+pub struct MaintenanceTemplate {
+    filter_air: bool,
+    filter_cabin: bool,
+    filter_oil: bool,
+    type_specific_maintenance: Option<String>,
+}
+
+impl From<Maintenance> for MaintenanceTemplate {
+    fn from(value: Maintenance) -> Self {
+        Self {
+            filter_air: value.filter_air(),
+            filter_cabin: value.filter_cabin(),
+            filter_oil: value.filter_air(),
+            type_specific_maintenance: value.type_specific_maintenance().map(|x| x.to_string()),
+        }
+    }
+}
 
 pub async fn handler_client_tab_history(
     State(_state): State<SharedState>,

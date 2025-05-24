@@ -1,3 +1,61 @@
-<div id="tab-content" role="tabpanel">
+<div id="tab-content" role="tabpanel" class="w-full h-full flex flex-col">
 	Cars tab
+	<div class="border border-md p-4 w-full">
+		<h3 class="font-bold"> Details </h3>
+		<div class="w-3/4 border border-md p-4 flex justify-between flex-wrap ">
+			<p class="w-1/2">
+				brand:
+				<span> {{brand}} </span>
+			</p>
+			<p class="w-1/2">
+				model:
+				<span>{{model}}</span>
+			</p>
+			<p class="w-1/2">
+				cc:
+				<span>{{cc}}</span>
+			</p>
+			<p class="w-1/2">
+				fuel:
+				<span>{{fuel}}</span>
+			</p>
+			<p class="w-1/2">
+				year:
+				<span>{{year}}</span>
+			</p>
+		</div>
+		<div class="w-1/4 border border-md p-4 flex flex-col gap-4 ">
+			<p class="pb-2 text-medium"> Oil </p>
+			<p>
+				quantity:
+				<span>{{oil_quantity}}</span>
+			</p>
+			<p>
+				type:
+				<span>{{oil_type}}</span </p>
+		</div>
+	</div>
+	<div class="border border-md p-4 grow w-full">
+		<h3> Interventions </h3>
+		<table class="w-full">
+			<thead>
+				<tr>
+					<th> type </th>
+					<th> amount </th>
+					<th> milage </th>
+					<th> date </th>
+				</tr>
+			</thead>
+			<tbody>
+				{% for intervention in interventions %}
+				<tr>
+					<td> {{intervention.intervention_type}} </td>
+					<td> {{intervention.amount}} </td>
+					<td> {{intervention.milage}} </td>
+					<td> {{intervention.intervention_date}} </td>
+				</tr>
+				{% endfor %}
+			</tbody>
+		</table>
+	</div>
 </div>

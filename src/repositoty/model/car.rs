@@ -1,6 +1,8 @@
-use strum_macros::Display;
 use serde::{Deserialize, Serialize};
+use strum_macros::Display;
 use surrealdb::{Datetime, RecordId};
+
+use super::ModelIntervertion;
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct ModelCar {
@@ -13,6 +15,7 @@ pub struct ModelCar {
     year: u32,
     fuel: ModelFuel,
     model: String,
+    interventions: Vec<ModelIntervertion>,
     created_at: Datetime,
     updated_at: Datetime,
 }
@@ -23,7 +26,6 @@ pub enum ModelFuel {
     Diesel,
     Other,
 }
-
 
 impl ModelCar {
     pub fn id(&self) -> RecordId {
@@ -48,15 +50,18 @@ impl ModelCar {
         self.oil_quantity.clone()
     }
     pub fn year(&self) -> u32 {
-        self.year.clone()
+        self.year
     }
     pub fn fuel(&self) -> ModelFuel {
-        self.fuel.clone()
+        self.fuel
     }
     pub fn created_at(&self) -> Datetime {
         self.created_at.clone()
     }
     pub fn updated_at(&self) -> Datetime {
         self.updated_at.clone()
+    }
+    pub fn interventions(&self) -> Vec<ModelIntervertion> {
+        self.interventions.clone()
     }
 }

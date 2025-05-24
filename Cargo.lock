@@ -180,6 +180,16 @@ dependencies = [
 ]
 
 [[package]]
+name = "askama-enum"
+version = "0.0.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "5c8fbb1b5804aa2e207eb5f1e60ddf2138689d8dda283e85c43b8036d888aa96"
+dependencies = [
+ "quote",
+ "syn 1.0.109",
+]
+
+[[package]]
 name = "askama_derive"
 version = "0.13.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2431,6 +2441,7 @@ name = "pipauto"
 version = "0.1.0"
 dependencies = [
  "askama",
+ "askama-enum",
  "askama_web",
  "axum",
  "axum-macros",
@@ -2438,6 +2449,7 @@ dependencies = [
  "derive_more",
  "faker_rand",
  "rand 0.8.5",
+ "rust_decimal",
  "rusty-money",
  "serde",
  "serde_json",
