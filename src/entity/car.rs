@@ -69,4 +69,7 @@ impl Car {
     pub fn year(&self) -> &Year {
         &self.year
     }
+    pub fn intervention(&self) -> &[Intervention] {
+        &self.interventions
+    }
 }

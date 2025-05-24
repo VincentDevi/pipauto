@@ -1,8 +1,9 @@
+use derive_more::Display;
 use rust_decimal::{Decimal, prelude::FromPrimitive};
 use rusty_money::{FormattableCurrency, Money, iso};
 use serde::{Deserialize, Serialize, ser::SerializeStruct};
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Display)]
 pub struct Price(Money<'static, iso::Currency>);
 
 impl Serialize for Price {

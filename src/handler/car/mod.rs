@@ -1,6 +1,9 @@
 use super::super::SharedState;
 
-use crate::{entity::Car, repositoty::Repository};
+use crate::{
+    entity::Car,
+    repositoty::{CarsFilter, Repository},
+};
 use askama::Template;
 use axum::{
     Json,
@@ -25,7 +28,9 @@ pub async fn handler_fetch_cars(
 ) -> Result<impl IntoResponse, HandlerError> {
     let db = state.read().await.db.lock().await.clone();
     let repository = Repository::new(&db);
-    let fetched_cars = repository.fetch_cars().await?;
+    let fetched_cars = repository
+        .fetch_cars(None, None, CarsFilter::default())
+        .await?;
     let prout = fetched_cars.into_iter().map(|x| x.into()).collect();
     let template = CarsTemplate { cars: prout };
     Ok(Html(template.render()?))
@@ -51,7 +56,7 @@ impl From<Car> for CarsTemp {
         Self {
             cc: value.cc().to_string(),
             brand: value.brand().to_string(),
-            oil_type: value.oil_qtype().to_string(),
+            oil_type: value.oil_type().to_string(),
             oil_quantity: value.oil_quantity().to_string(),
             year: value.year().to_string(),
         }

@@ -1,4 +1,5 @@
 use serde::{Deserialize, Serialize};
+use strum_macros::Display;
 
 use crate::repositoty::model::ModelMaintenance;
 
@@ -10,7 +11,22 @@ pub struct Maintenance {
     type_specific_maintenance: Option<MaintenanceType>,
 }
 
-#[derive(Debug, Clone, Copy, Serialize, Deserialize)]
+impl Maintenance {
+    pub fn filter_air(&self) -> bool {
+        self.filter_air
+    }
+    pub fn filter_cabin(&self) -> bool {
+        self.filter_cabin
+    }
+    pub fn filter_oil(&self) -> bool {
+        self.filter_oil
+    }
+    pub fn type_specific_maintenance(&self) -> Option<MaintenanceType> {
+        self.type_specific_maintenance
+    }
+}
+
+#[derive(Debug, Clone, Copy, Serialize, Deserialize, Display)]
 pub enum MaintenanceType {
     FilterGasoil,
     SparkPlug,
