@@ -48,6 +48,9 @@ impl TryFrom<ModelCar> for Car {
 }
 
 impl Car {
+    pub fn id(&self) -> &str {
+        &self.car_id
+    }
     pub fn cc(&self) -> &Cc {
         &self.cc
     }

@@ -4,8 +4,8 @@ use crate::{
         Address, ClientRecordId, Records,
         intervention::{InterventionType, Maintenance},
     },
-    entity::{Car, Client, Intervention},
-    repositoty::{CarsFilter, Repository},
+    entity::{Car, Client, Intervention, SpecificInterventionWithCar},
+    repositoty::{CarsFilter, InterventionFilter, PagingFilter, Repository},
 };
 use askama::Template;
 use axum::{
@@ -455,15 +455,55 @@ impl From<Maintenance> for MaintenanceTemplate {
 }
 
 pub async fn handler_client_tab_history(
-    State(_state): State<SharedState>,
-    Path(_id): Path<String>,
+    State(state): State<SharedState>,
+    Path(id): Path<String>,
 ) -> Result<impl IntoResponse, HandlerError> {
-    Ok(Html(ClientTabHistoryTemplate.render()?))
+    let db = state.read().await.db.lock().await.clone();
+    let repository = Repository::new(&db);
+    let interventions = repository
+        .fetch_intervention(
+            PagingFilter::default(),
+            None,
+            InterventionFilter {
+                client_id: Some(id),
+            },
+        )
+        .await?;
+    let template = ClientTabHistoryTemplate {
+        interventions: interventions.into_iter().map(|x| x.into()).collect(),
+    };
+    Ok(Html(template.render()?))
 }
 
 #[derive(Template)]
 #[template(path = "client_tab_history.html")]
-pub struct ClientTabHistoryTemplate;
+pub struct ClientTabHistoryTemplate {
+    interventions: Vec<InterventionHistoryTemplate>,
+}
+
+impl From<SpecificInterventionWithCar> for InterventionHistoryTemplate {
+    fn from(value: SpecificInterventionWithCar) -> Self {
+        Self {
+            intervention_type: value.intervention_type().to_string(),
+            intervention_date: value.intervention_date().to_string(),
+            car: InterventionCarHistory {
+                brand: value.car().brand.clone(),
+                model: value.car().model.clone(),
+            },
+        }
+    }
+}
+
+pub struct InterventionHistoryTemplate {
+    intervention_type: String,
+    intervention_date: String,
+    car: InterventionCarHistory,
+}
+
+pub struct InterventionCarHistory {
+    brand: String,
+    model: String,
+}
 
 /// Serde deserialization decorator to map empty Strings to None,
 fn empty_string_as_none<'de, D, T>(de: D) -> Result<Option<T>, D::Error>

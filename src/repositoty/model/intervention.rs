@@ -1,13 +1,11 @@
 use serde::{Deserialize, Serialize};
 use surrealdb::{Datetime, RecordId};
 
-use super::ModelCar;
-
 #[derive(Debug, Clone, Deserialize, Serialize)]
 pub struct ModelIntervertion {
     id: RecordId,
     client: RecordId,
-    car_id: ModelCar,
+    car_id: RecordId,
     price: String,
     mileage: String,
     remark: Vec<String>,
@@ -33,7 +31,7 @@ impl ModelIntervertion {
     pub fn client(&self) -> RecordId {
         self.client.clone()
     }
-    pub fn car(&self) -> ModelCar {
+    pub fn car(&self) -> RecordId {
         self.car_id.clone()
     }
     pub fn price(&self) -> String {
