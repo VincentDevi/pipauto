@@ -21,7 +21,6 @@ impl Repository {
         );
         let mut response = self.db.query(query).await?;
         let result: Vec<ModelIntervertionWithCar> = response.take(0)?;
-        println!("RESULT : {:?}", result);
         result
             .into_iter()
             .map(|x| x.try_into())
