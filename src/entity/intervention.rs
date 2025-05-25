@@ -1,6 +1,9 @@
 use crate::repositoty::model::ModelIntervertion;
 
-use super::super::common::{car::*, intervention::*};
+use super::{
+    super::common::{car::*, intervention::*},
+    Car,
+};
 use chrono::{DateTime, NaiveDateTime};
 use serde::{Deserialize, Serialize};
 
@@ -11,6 +14,7 @@ pub struct Intervention {
     mileage: Milage,
     remarks: Vec<String>,
     intervention_type: InterventionType,
+    car: Car,
 }
 
 impl TryFrom<ModelIntervertion> for Intervention {
@@ -27,6 +31,7 @@ impl TryFrom<ModelIntervertion> for Intervention {
             mileage: value.mileage().try_into()?,
             remarks: Vec::default(), // this should be fixed later on
             intervention_date: date_time?.naive_utc(),
+            car: value.car().try_into()?,
         })
     }
 }
