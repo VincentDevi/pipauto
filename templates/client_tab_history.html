@@ -1,3 +1,22 @@
-<div id="tab-content" role="tabpanel">
-	History tab
+<div id="tab-content" role="tabpanel" clas="w-full h-full">
+	<table class="w-full h-full">
+		<thead class="w-full">
+			<tr class="w-full">
+				<th> brand </th>
+				<th> model </th>
+				<th> type </th>
+				<th> date </th>
+			</tr>
+		</thead>
+		<tbody class="w-full">
+			{% for intervention in interventions %}
+			<tr class="w-full">
+				<td class="text-center"> {{intervention.car.brand}} </td>
+				<td class="text-center"> {{intervention.car.model}} </td>
+				<td class="text-center"> {{intervention.intervention_type}} </td>
+				<td class="text-center"> {{intervention.intervention_date}} </td>
+			</tr>
+			{% endfor %}
+		</tbody>
+	</table>
 </div>

@@ -31,7 +31,7 @@ impl ModelIntervertion {
     pub fn client(&self) -> RecordId {
         self.client.clone()
     }
-    pub fn car_id(&self) -> RecordId {
+    pub fn car(&self) -> RecordId {
         self.car_id.clone()
     }
     pub fn price(&self) -> String {

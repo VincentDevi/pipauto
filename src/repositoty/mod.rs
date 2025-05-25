@@ -6,11 +6,13 @@ use surrealdb::{Surreal, engine::remote::ws::Client};
 mod car;
 mod client;
 mod error;
+mod intervention;
 pub mod model;
 
 pub use car::*;
 pub use client::*;
 pub use error::*;
+pub use intervention::*;
 
 #[derive(Debug, Clone)]
 pub struct Repository {
