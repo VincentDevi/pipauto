@@ -1,9 +1,5 @@
 use super::super::SharedState;
 use crate::{
-    common::{
-        Address, ClientRecordId, Records,
-        intervention::{InterventionType, Maintenance},
-    },
     entity::{Car, Client, Intervention, SpecificInterventionWithCar},
     repositoty::{CarsFilter, InterventionFilter, PagingFilter, Repository},
 };
@@ -13,6 +9,8 @@ use axum::{
     extract::{Path, State},
     response::{Html, IntoResponse},
 };
+use common::intervention::*;
+use repository::record::{ClientRecordId, Records};
 use serde::{Deserialize, Deserializer, de};
 use std::{fmt, str::FromStr};
 use surrealdb::RecordId;

@@ -803,6 +803,16 @@ dependencies = [
 [[package]]
 name = "common"
 version = "0.1.0"
+dependencies = [
+ "chrono",
+ "derive_more",
+ "rust_decimal",
+ "rusty-money",
+ "serde",
+ "strum 0.27.1",
+ "strum_macros 0.27.1",
+ "thiserror 1.0.69",
+]
 
 [[package]]
 name = "concurrent-queue"
@@ -2811,6 +2821,11 @@ dependencies = [
 [[package]]
 name = "repository"
 version = "0.1.0"
+dependencies = [
+ "serde",
+ "surrealdb",
+ "thiserror 1.0.69",
+]
 
 [[package]]
 name = "reqwest"
@@ -3109,9 +3124,11 @@ dependencies = [
  "axum",
  "axum-macros",
  "chrono",
+ "common",
  "derive_more",
  "faker_rand",
  "rand 0.8.5",
+ "repository",
  "rust_decimal",
  "rusty-money",
  "serde",

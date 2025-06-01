@@ -1,11 +1,7 @@
+use super::Intervention;
+use crate::repositoty::model::{ModelCar, ModelFuel};
+use common::{car::*, std::*};
 use serde::{Deserialize, Serialize};
-
-use crate::{
-    common::Year,
-    repositoty::model::{ModelCar, ModelFuel},
-};
-
-use super::{super::common::car::*, Intervention};
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Car {

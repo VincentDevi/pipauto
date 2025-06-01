@@ -2,8 +2,6 @@ use std::fmt::Display;
 
 use serde::{Deserialize, Serialize};
 
-use crate::repositoty::model::AddressModel;
-
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Address {
     country: String,
@@ -13,6 +11,14 @@ pub struct Address {
 }
 
 impl Address {
+    pub fn new(street: String, number: String, country: String, postal: String) -> Self {
+        Self {
+            country,
+            street,
+            number,
+            postal,
+        }
+    }
     pub fn street(&self) -> String {
         self.street.clone()
     }
@@ -34,16 +40,6 @@ impl Display for Address {
             "{} {}, {}, {}",
             self.street, self.number, self.postal, self.country
         )
-    }
-}
-impl From<AddressModel> for Address {
-    fn from(value: AddressModel) -> Self {
-        Self {
-            street: value.street(),
-            country: value.country(),
-            postal: value.postal(),
-            number: value.number(),
-        }
     }
 }
 

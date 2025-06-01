@@ -1,8 +1,8 @@
+use common::std::*;
+use repository::record::ClientRecordId;
 use serde::{Deserialize, Serialize};
 
 use crate::repositoty::model::ModelClient;
-
-use super::super::common::*;
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Client {

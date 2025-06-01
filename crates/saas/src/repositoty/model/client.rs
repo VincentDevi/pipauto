@@ -1,7 +1,6 @@
+use common::std::*;
 use serde::{Deserialize, Serialize};
 use surrealdb::{Datetime, RecordId};
-
-use crate::common::Address;
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct ModelClient {
