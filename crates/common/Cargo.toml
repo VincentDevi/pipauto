@@ -4,3 +4,11 @@ version = "0.1.0"
 edition = "2024"
 
 [dependencies]
+thiserror = "1.0"
+derive_more = {version = "2.0", features = ["full"]}
+strum = "0.27"
+strum_macros = "0.27"
+serde = { version = "1.0", features = ["derive"] }
+rust_decimal = "1.37.1"
+rusty-money = "0.4.1"
+chrono = "0.4"

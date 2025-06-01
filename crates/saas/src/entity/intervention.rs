@@ -1,10 +1,6 @@
 use crate::repositoty::{ModelIntervertionWithCar, model::ModelIntervertion};
-
-use super::{
-    super::common::{car::*, intervention::*},
-    Car,
-};
 use chrono::{DateTime, NaiveDateTime};
+use common::{car::*, intervention::*};
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Clone, Deserialize, Serialize)]
