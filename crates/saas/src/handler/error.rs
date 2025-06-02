@@ -32,9 +32,3 @@ impl From<RepositoryError> for HandlerError {
         Self::Repository(value.to_string())
     }
 }
-
-impl From<askama::Error> for HandlerError {
-    fn from(value: askama::Error) -> Self {
-        Self::Templating(value.to_string())
-    }
-}

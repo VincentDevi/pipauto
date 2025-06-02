@@ -1,16 +1,14 @@
 mod intervention_type;
 mod maintenance;
 
+use super::{car::*, std::*};
 pub use intervention_type::*;
 pub use maintenance::*;
-
-use super::{car::*, *};
-use chrono::NaiveDateTime;
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Clone, Deserialize, Serialize)]
 pub struct Intervention {
-    intervention_date: NaiveDateTime,
+    intervention_date: Date,
     price: Price,
     mileage: Milage,
     remarks: Vec<String>,
@@ -18,7 +16,7 @@ pub struct Intervention {
 }
 
 impl Intervention {
-    pub fn intervention_date(&self) -> &NaiveDateTime {
+    pub fn intervention_date(&self) -> &Date {
         &self.intervention_date
     }
     pub fn price(&self) -> &Price {
@@ -37,7 +35,7 @@ impl Intervention {
 
 #[derive(Debug, Clone, Deserialize, Serialize)]
 pub struct SpecificInterventionWithCar {
-    intervention_date: NaiveDateTime,
+    intervention_date: Date,
     price: Price,
     mileage: Milage,
     remarks: Vec<String>,
@@ -45,7 +43,7 @@ pub struct SpecificInterventionWithCar {
     car: SpecificCarForIntervention,
 }
 impl SpecificInterventionWithCar {
-    pub fn intervention_date(&self) -> &NaiveDateTime {
+    pub fn intervention_date(&self) -> &Date {
         &self.intervention_date
     }
     pub fn price(&self) -> &Price {

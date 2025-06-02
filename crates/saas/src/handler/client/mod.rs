@@ -10,7 +10,7 @@ use axum::{
 };
 use repository::record::{ClientRecordId, Records};
 use surrealdb::RecordId;
-use templating::{client::*, clients::*};
+use templating::{Body, Render, client::*, clients::*};
 
 use super::error::*;
 pub async fn handler_get_client(
@@ -25,7 +25,7 @@ pub async fn handler_get_client(
         full_name: client_detail.full_name(),
     };
 
-    Ok(Html(template.render()?))
+    Ok(Html(template.render_template()?))
 }
 
 pub async fn handler_fetch_clients(
@@ -45,7 +45,7 @@ pub async fn handler_fetch_clients(
             count: fetched_clients.1,
         },
     };
-    Ok(Html(template.render()?))
+    Ok(Html(template.render_template()?))
 }
 
 pub async fn handle_clients_table(
@@ -66,7 +66,7 @@ pub async fn handle_clients_table(
             count: fetched_clients.1,
         },
     };
-    Ok(Html(template.render()?))
+    Ok(Html(template.render_template()?))
 }
 
 pub async fn handle_increment_clients_paging(
@@ -97,7 +97,7 @@ pub async fn handle_increment_clients_paging(
         },
     };
     println!("end of increment : {} ", paging.offset());
-    Ok(Html(template.render()?))
+    Ok(Html(template.render_template()?))
 }
 
 pub async fn handle_decrement_clients_paging(
@@ -126,7 +126,7 @@ pub async fn handle_decrement_clients_paging(
         },
     };
     println!("end of decrement : {} ", paging.offset());
-    Ok(Html(template.render()?))
+    Ok(Html(template.render_template()?))
 }
 
 pub async fn handle_search_client(
@@ -152,7 +152,7 @@ pub async fn handle_search_client(
             count: fetched_clients.1,
         },
     };
-    Ok(Html(template.render()?))
+    Ok(Html(template.render_template()?))
 }
 
 pub async fn handler_client_create(
@@ -168,7 +168,7 @@ pub async fn handler_client_create(
         full_name: new_client_record.full_name(),
     };
 
-    Ok(Html(template.render()?))
+    Ok(Html(template.render_template()?))
 }
 
 pub async fn handler_create_client_page(
@@ -194,7 +194,7 @@ pub async fn handler_update_client_page(
         email: client.email().map(|x| x.to_string()),
         phone: client.phone().map(|x| x.to_string()),
     };
-    Ok(Html(template.render()?))
+    Ok(Html(template.render_template()?))
 }
 
 pub async fn handler_update_client(
@@ -212,7 +212,7 @@ pub async fn handler_update_client(
         id: updated_client.id().id(),
         full_name: updated_client.full_name(),
     };
-    Ok(Html(template.render()?))
+    Ok(Html(template.render_template()?))
 }
 
 pub async fn handler_client_tab_details(
@@ -232,7 +232,7 @@ pub async fn handler_client_tab_details(
         phone: client.phone().map(|x| x.to_string()),
         email: client.email().map(|x| x.to_string()),
     };
-    Ok(Html(template.render()?))
+    Ok(Html(template.render_template()?))
 }
 
 pub async fn handler_client_tab_cars(
@@ -245,7 +245,7 @@ pub async fn handler_client_tab_cars(
         .fetch_cars(None, None, CarsFilter::new(Some(id)))
         .await?;
     let template: ClientCar = car.first().unwrap().clone().into();
-    Ok(Html(template.render()?))
+    Ok(Html(template.render_template()?))
 }
 
 pub async fn handler_client_tab_history(
@@ -266,5 +266,5 @@ pub async fn handler_client_tab_history(
     let template = ClientTabHistoryTemplate {
         interventions: interventions.into_iter().map(|x| x.into()).collect(),
     };
-    Ok(Html(template.render()?))
+    Ok(Html(template.render_template()?))
 }

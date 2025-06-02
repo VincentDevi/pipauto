@@ -11,13 +11,13 @@ use askama::Template;
 #[derive(Template)]
 #[template(path = "client.html")]
 pub struct ClientTemplatePage {
-    id: String,
-    full_name: String,
+    pub id: String,
+    pub full_name: String,
 }
 
 #[derive(Template)]
 #[template(path = "client_details_page.html")]
 pub struct ClientDetailsTemplatePage {
-    id: String,
-    full_name: String,
+    pub id: String,
+    pub full_name: String,
 }

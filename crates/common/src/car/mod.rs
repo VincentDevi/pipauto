@@ -32,3 +32,30 @@ pub struct Car {
     year: Year,
     interventions: Vec<Intervention>,
 }
+
+impl Car {
+    pub fn cc(&self) -> Cc {
+        self.cc.clone()
+    }
+    pub fn model(&self) -> Model {
+        self.model.clone()
+    }
+    pub fn intervention(&self) -> Vec<Intervention> {
+        self.interventions.clone()
+    }
+    pub fn brand(&self) -> Brand {
+        self.brand.clone()
+    }
+    pub fn fuel(&self) -> Fuel {
+        self.fuel
+    }
+    pub fn oil_type(&self) -> OilType {
+        self.oil_type.clone()
+    }
+    pub fn oil_quantity(&self) -> OilQuantity {
+        self.oil_quantity.clone()
+    }
+    pub fn year(&self) -> Year {
+        self.year
+    }
+}

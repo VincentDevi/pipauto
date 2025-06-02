@@ -18,10 +18,10 @@ pub struct UpdateClient {
 #[derive(Template)]
 #[template(path = "client_update.html")]
 pub struct UpdateClientTemplate {
-    id: String,
-    first_name: String,
-    last_name: String,
-    address: String,
-    phone: Option<String>,
-    email: Option<String>,
+    pub id: String,
+    pub first_name: String,
+    pub last_name: String,
+    pub address: String,
+    pub phone: Option<String>,
+    pub email: Option<String>,
 }
