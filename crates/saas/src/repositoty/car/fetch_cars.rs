@@ -1,11 +1,10 @@
 use std::fmt::Display;
 
+use super::super::Repository;
 use crate::repositoty::PagingFilter;
 use crate::repositoty::error::RepositoryError;
 use crate::repositoty::model::ModelCar;
-
-use super::super::super::entity::*;
-use super::super::Repository;
+use common::car::*;
 
 impl Repository {
     pub async fn fetch_cars(

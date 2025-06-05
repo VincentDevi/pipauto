@@ -1,4 +1,4 @@
-use std::fmt::Display;
+use std::{fmt::Display, sync::Arc};
 
 use serde::{Deserialize, Serialize};
 
@@ -82,7 +82,7 @@ impl<'a> AddressBuilder<'a> {
                 .country
                 .ok_or("missing country".to_string())?
                 .to_string(),
-            street: self.street.ok_or("missing street".to_string())?.to_string(),
+            street: self.street.ok_or("missing street")?.to_string(),
             number: self.number.ok_or("cant convert".to_string())?.to_string(),
             postal: self.postal.ok_or("cant convert".to_string())?.to_string(),
         })

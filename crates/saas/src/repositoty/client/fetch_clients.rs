@@ -1,9 +1,8 @@
+use super::super::Repository;
 use crate::repositoty::PagingFilter;
 use crate::repositoty::error::RepositoryError;
 use crate::repositoty::model::ModelClient;
-
-use super::super::super::entity::*;
-use super::super::Repository;
+use common::client::*;
 
 impl Repository {
     pub async fn fetch_clients(

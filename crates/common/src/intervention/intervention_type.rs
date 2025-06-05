@@ -1,4 +1,4 @@
-use std::fmt::Display;
+use ::std::fmt::Display;
 
 use serde::{Deserialize, Serialize};
 
@@ -11,7 +11,7 @@ pub enum InterventionType {
 }
 
 impl Display for InterventionType {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
         match &self {
             Self::Repair => write!(f, "Repair"),
             Self::Maintenance(_) => write!(f, "Maintenance"),

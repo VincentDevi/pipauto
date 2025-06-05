@@ -1,9 +1,8 @@
 [workspace]
 members = [
     "crates/common",
-#    "crates/entities",
     "crates/repository",
-#    "crates/templating",
+    "crates/templating",
 #    "crates/statistics",
     "crates/saas"
 ]

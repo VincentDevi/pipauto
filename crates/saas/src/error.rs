@@ -1,9 +1,9 @@
-use crate::handler::HandlerError;
 use axum::Json;
 use axum::http::StatusCode;
 use axum::response::IntoResponse;
 use axum::response::Response;
 use std::sync::PoisonError;
+use templating::error::Error as TemplatingError;
 use thiserror::Error;
 
 use crate::repositoty::RepositoryError;
@@ -16,8 +16,8 @@ pub enum Error {
     Internal(String),
     #[error("repository error: {0}")]
     Repository(String),
-    #[error("handler error: {0}")]
-    Handler(String),
+    #[error("templating error: {0}")]
+    Templating(String),
 }
 
 impl IntoResponse for Error {
@@ -45,8 +45,8 @@ impl From<RepositoryError> for Error {
     }
 }
 
-impl From<HandlerError> for Error {
-    fn from(error: HandlerError) -> Self {
-        Self::Handler(error.to_string())
+impl From<TemplatingError> for Error {
+    fn from(value: TemplatingError) -> Self {
+        Self::Templating(value.to_string())
     }
 }
