@@ -13,8 +13,8 @@ impl From<SpecificInterventionWithCar> for InterventionHistoryTemplate {
             intervention_type: value.intervention_type().to_string(),
             intervention_date: value.intervention_date().to_string(),
             car: InterventionCarHistory {
-                brand: value.car().brand.clone(),
-                model: value.car().model.clone(),
+                brand: value.car().brand().to_string(),
+                model: value.car().model().to_string(),
             },
         }
     }

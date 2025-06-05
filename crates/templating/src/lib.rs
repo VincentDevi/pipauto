@@ -1,11 +1,13 @@
 use askama::Template;
+use error::Error;
 use serde::{Deserialize, Deserializer, de};
-use std::{fmt, str::FromStr};
+use std::{fmt, str::FromStr, sync::Arc};
 
 pub mod car;
 pub mod cars;
 pub mod client;
 pub mod clients;
+pub mod error;
 pub mod home;
 
 #[derive(Debug, Deserialize)]
@@ -29,13 +31,14 @@ where
 }
 
 pub trait Render {
-    fn render_template(&self) -> Result<String, String>;
+    fn render_template(&self) -> Result<String, Error>;
 }
 impl<T> Render for T
 where
     T: Template,
 {
-    fn render_template(&self) -> Result<String, String> {
-        self.render().map_err(|e| e.to_string())
+    fn render_template(&self) -> Result<String, Error> {
+        self.render()
+            .map_err(|e| Error::Parsing(Arc::from(e.to_string())))
     }
 }
