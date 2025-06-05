@@ -1,11 +1,8 @@
+use crate::repositoty::{RepositoryError, model::ModelClient};
+use common::{client::*, std::*};
 use serde::{Deserialize, Serialize};
 use surrealdb::RecordId;
-
-use crate::{
-    entity::Client,
-    handler::client::CreateClient,
-    repositoty::{RepositoryError, model::ModelClient},
-};
+use templating::client::CreateClient;
 
 use super::super::Repository;
 
@@ -15,15 +12,20 @@ impl Repository {
         form_data: CreateClientEntity,
     ) -> Result<Client, RepositoryError> {
         let create_client_model: CreateClientModel = form_data.into();
-        let record: Option<ModelClient> = self
+        let record: ModelClient = self
             .db
             .create("client")
             .content(create_client_model)
-            .await?;
-        Ok(record
-            .ok_or(RepositoryError::DatabaseError)?
-            .try_into()
-            .map_err(RepositoryError::ParsingError)?)
+            .await?
+            .ok_or(RepositoryError::DatabaseError)?;
+        Ok(ClientBuilder::new()
+            .first_name(record.first_name())
+            .last_name(record.last_name())
+            .full_name(format!("{} {}", record.first_name(), record.last_name()))
+            .phone(record.phone().map(Phone::new))
+            .email(record.email().map(Email::new))
+            .address(record.address().into())
+            .build()?)
     }
 }
 

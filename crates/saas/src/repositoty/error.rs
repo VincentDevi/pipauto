@@ -1,3 +1,4 @@
+use common::error::Error as CommonError;
 use thiserror::Error;
 
 #[derive(Error, Debug)]
@@ -11,5 +12,11 @@ pub enum RepositoryError {
 impl From<surrealdb::Error> for RepositoryError {
     fn from(_error: surrealdb::Error) -> Self {
         Self::DatabaseError
+    }
+}
+
+impl From<CommonError> for RepositoryError {
+    fn from(value: CommonError) -> Self {
+        Self::ParsingError(value.to_string())
     }
 }

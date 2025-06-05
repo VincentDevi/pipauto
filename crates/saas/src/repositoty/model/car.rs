@@ -1,8 +1,10 @@
+use std::sync::Arc;
+
+use super::ModelIntervertion;
+use common::{car::*, error::Error, std::*};
 use serde::{Deserialize, Serialize};
 use strum_macros::Display;
 use surrealdb::{Datetime, RecordId};
-
-use super::ModelIntervertion;
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct ModelCar {
@@ -25,6 +27,16 @@ pub enum ModelFuel {
     Gasoline,
     Diesel,
     Other,
+}
+
+impl From<ModelFuel> for Fuel {
+    fn from(value: ModelFuel) -> Self {
+        match value {
+            ModelFuel::Gasoline => Self::Gasoline,
+            ModelFuel::Diesel => Self::Diesel,
+            ModelFuel::Other => Self::Other,
+        }
+    }
 }
 
 impl ModelCar {
@@ -63,5 +75,30 @@ impl ModelCar {
     }
     pub fn interventions(&self) -> Vec<ModelIntervertion> {
         self.interventions.clone()
+    }
+}
+
+impl TryFrom<ModelCar> for Car {
+    type Error = Error;
+    fn try_from(value: ModelCar) -> Result<Self, Self::Error> {
+        CarBuilder::new()
+            .car(value.id.to_string())
+            .client(value.client_id.to_string())
+            .brand(Brand::new(value.brand))
+            .model(Model::new(value.model))
+            .cc(Cc::new(value.cc))
+            .fuel(value.fuel.into())
+            .oil_quantity(OilQuantity::new(value.oil_quantity))
+            .oil_type(OilType::new(value.oil_type))
+            .year(Year::new(value.year))
+            .interventions(
+                value
+                    .interventions
+                    .into_iter()
+                    .map(|x| x.try_into())
+                    .collect()?,
+            )
+            .build()
+            .map_err(|e| Error::Parsing(Arc::from("a")))
     }
 }

@@ -1,17 +1,10 @@
-use askama::Template;
+use super::super::Error;
 use axum::response::{Html, IntoResponse};
+use templating::{Render, home::HomePage};
 
-use super::HandlerError;
-
-pub async fn handler_home() -> Result<impl IntoResponse, HandlerError> {
+pub async fn handler_home() -> Result<impl IntoResponse, Error> {
     let template = HomePage {
         name: "Filippo".to_string(),
     };
-    Ok(Html(template.render()?))
-}
-
-#[derive(Template)]
-#[template(path = "home.html")]
-struct HomePage {
-    name: String,
+    Ok(Html(template.render_template()?))
 }

@@ -1,22 +1,20 @@
+use super::super::Error;
 use super::super::SharedState;
-use crate::{
-    entity::Client,
-    repositoty::{CarsFilter, InterventionFilter, PagingFilter, Repository},
-};
+use crate::repositoty::{CarsFilter, InterventionFilter, PagingFilter, Repository};
 use axum::{
     Form,
     extract::{Path, State},
     response::{Html, IntoResponse},
 };
+use common::{car::*, client::*, intervention::*};
 use repository::record::{ClientRecordId, Records};
 use surrealdb::RecordId;
 use templating::{Body, Render, client::*, clients::*};
 
-use super::error::*;
 pub async fn handler_get_client(
     State(state): State<SharedState>,
     id: Path<String>,
-) -> Result<impl IntoResponse, HandlerError> {
+) -> Result<impl IntoResponse, Error> {
     let db = state.read().await.db.lock().await.clone();
     let repositoty = Repository::new(&db);
     let client_detail = repositoty.get_client(&id).await?;
@@ -30,7 +28,7 @@ pub async fn handler_get_client(
 
 pub async fn handler_fetch_clients(
     State(state): State<SharedState>,
-) -> Result<impl IntoResponse, HandlerError> {
+) -> Result<impl IntoResponse, Error> {
     let db = state.read().await.db.lock().await.clone();
 
     let paging = state.read().await.paging;
@@ -50,7 +48,7 @@ pub async fn handler_fetch_clients(
 
 pub async fn handle_clients_table(
     State(state): State<SharedState>,
-) -> Result<impl IntoResponse, HandlerError> {
+) -> Result<impl IntoResponse, Error> {
     let db = state.read().await.db.lock().await.clone();
 
     let paging = state.read().await.paging;
@@ -71,7 +69,7 @@ pub async fn handle_clients_table(
 
 pub async fn handle_increment_clients_paging(
     State(state): State<SharedState>,
-) -> Result<impl IntoResponse, HandlerError> {
+) -> Result<impl IntoResponse, Error> {
     let db = state.read().await.db.lock().await.clone();
 
     println!("begin increment : {}", state.read().await.paging.offset());
@@ -102,7 +100,7 @@ pub async fn handle_increment_clients_paging(
 
 pub async fn handle_decrement_clients_paging(
     State(state): State<SharedState>,
-) -> Result<impl IntoResponse, HandlerError> {
+) -> Result<impl IntoResponse, Error> {
     let db = state.read().await.db.lock().await.clone();
 
     let repository = Repository::new(&db);
@@ -132,7 +130,7 @@ pub async fn handle_decrement_clients_paging(
 pub async fn handle_search_client(
     State(state): State<SharedState>,
     Form(body): Form<Body>,
-) -> Result<impl IntoResponse, HandlerError> {
+) -> Result<impl IntoResponse, Error> {
     let db = state.read().await.db.lock().await.clone();
     let repository = Repository::new(&db);
     {
@@ -158,13 +156,13 @@ pub async fn handle_search_client(
 pub async fn handler_client_create(
     State(state): State<SharedState>,
     Form(form_data): Form<CreateClient>,
-) -> Result<impl IntoResponse, HandlerError> {
+) -> Result<impl IntoResponse, Error> {
     let db = state.read().await.db.lock().await.clone();
     let repository = Repository::new(&db);
     let new_client_record = repository.create_client(form_data.into()).await?;
 
     let template = ClientDetailsTemplatePage {
-        id: new_client_record.id().id(),
+        id: new_client_record.id(),
         full_name: new_client_record.full_name(),
     };
 
@@ -173,14 +171,14 @@ pub async fn handler_client_create(
 
 pub async fn handler_create_client_page(
     State(_state): State<SharedState>,
-) -> Result<impl IntoResponse, HandlerError> {
-    Ok(Html(CreateClientTemplate.render()?))
+) -> Result<impl IntoResponse, Error> {
+    Ok(Html(CreateClientTemplate.render_template()?))
 }
 
 pub async fn handler_update_client_page(
     State(state): State<SharedState>,
     Path(id): Path<String>,
-) -> Result<impl IntoResponse, HandlerError> {
+) -> Result<impl IntoResponse, Error> {
     let db = state.read().await.db.lock().await.clone();
 
     let repository = Repository::new(&db);
@@ -201,7 +199,7 @@ pub async fn handler_update_client(
     State(state): State<SharedState>,
     Path(id): Path<String>,
     Form(form_data): Form<UpdateClient>,
-) -> Result<impl IntoResponse, HandlerError> {
+) -> Result<impl IntoResponse, Error> {
     let db = state.read().await.db.lock().await.clone();
     let client_record_id: RecordId = ClientRecordId::new(&id).into();
     let repository = Repository::new(&db);
@@ -209,7 +207,7 @@ pub async fn handler_update_client(
         .update_client(client_record_id, form_data)
         .await?;
     let template = ClientDetailsTemplatePage {
-        id: updated_client.id().id(),
+        id: updated_client.id(),
         full_name: updated_client.full_name(),
     };
     Ok(Html(template.render_template()?))
@@ -218,7 +216,7 @@ pub async fn handler_update_client(
 pub async fn handler_client_tab_details(
     State(state): State<SharedState>,
     Path(id): Path<String>,
-) -> Result<impl IntoResponse, HandlerError> {
+) -> Result<impl IntoResponse, Error> {
     let db = state.read().await.db.lock().await.clone();
     let repository = Repository::new(&db);
     let client = repository.get_client(&id).await?;
@@ -238,7 +236,7 @@ pub async fn handler_client_tab_details(
 pub async fn handler_client_tab_cars(
     State(state): State<SharedState>,
     Path(id): Path<String>,
-) -> Result<impl IntoResponse, HandlerError> {
+) -> Result<impl IntoResponse, Error> {
     let db = state.read().await.db.lock().await.clone();
     let repository = Repository::new(&db);
     let car = repository
@@ -251,7 +249,7 @@ pub async fn handler_client_tab_cars(
 pub async fn handler_client_tab_history(
     State(state): State<SharedState>,
     Path(id): Path<String>,
-) -> Result<impl IntoResponse, HandlerError> {
+) -> Result<impl IntoResponse, Error> {
     let db = state.read().await.db.lock().await.clone();
     let repository = Repository::new(&db);
     let interventions = repository
