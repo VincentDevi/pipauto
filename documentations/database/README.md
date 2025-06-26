@@ -1,119 +1,65 @@
-# 📚  Pipauto Database Overview
+# SurrealDB Database Documentation
 
-## 🧩 Core Concept
+## Overview
 
-The database tracks:
+This document provides a comprehensive analysis of the SurrealDB database designed for automotive service management. The database manages clients, their vehicles, maintenance interventions, and ownership history. This system appears to be designed for an automotive service center or garage that tracks customer vehicles and their service history.
 
-- **Clients** who own cars.
+## Database Architecture
 
-- **Cars** that receive repairs or maintenance.
+### Schema Configuration
+- **Database Type**: SurrealDB with SCHEMAFULL tables
+- **Permissions**: Currently set to NONE for all tables
+- **Analyzer**: Custom `client_analyzer` with TOKENIZERS CLASS,CAMEL and FILTERS NGRAM(1,4),LOWERCASE for search functionality
 
-- **Interventions** performed on those cars.
+## Tables Detailed Analysis
 
-- **Ownership history**, logging all past owners of a car.
+#### 1. Client Table
 
-Each table is tightly connected to reflect real-world relationships between car owners, their vehicles, and maintenance history.
+- **Purpose**: Manages individuals associated with vehicle ownership.
+- **Fields**:
+  - `first_name`, `last_name`, `full_name`: Identification.
+  - `address`: Structured as a nested object with street, number, postal, and country details.
+  - `email`, `phone`: Optional fields for contact.
+  - `created_at`, `updated_at`: Timestamps documenting record changes.
+- **Relationships**:
+  - Links with the Car table through `client_id`, enabling multiple car records per client.
+  - Indirectly tied to interventions via car ownership.
 
-## 🗃️ Tables Overview
+#### 2. Car Table
 
-1. client
-Represents an individual or entity that owns one or more cars.
+- **Purpose**: Details cars and their characteristics.
+- **Fields**:
+  - `brand`, `model`, `fuel`, `year`: Car attributes.
+  - `cc`: Engine capacity.
+  - `oil_type`, `oil_quantity`: Attributes pivotal for maintenance.
+  - `client_id`: Connects the car to its owner in the Client table.
+- **Relationships**:
+  - Car-client associations via `client_id`, supporting ownership tracking.
+  - Associations with Intervention table signify service history.
 
-**Key fields:**
+#### 3. Intervention Table
 
-- `first_name`, `last_name`, `full_name` 
+- **Purpose**: Chronicles maintenance or repairs of vehicles.
+- **Fields**:
+  - `car_id`: Connects to the Car table, specifying interventions per vehicle.
+  - `client`: Relates back to the client linked with the car.
+  - `intervention_date`: Date when service actions occurred.
+  - `intervention_type`: Either a `Maintenance` object or a `Repair` label.
+  - `mileage`, `price`: Details on vehicle condition and service costs.
+- **Relationships**:
+  - Tied to cars, indicating all performed interventions and cumulative service history.
+  - Influences potential vehicle resale strategies and service schedules.
 
-- `email`, `phone` 
+#### 4. Car Owner History Table
 
-- `address` (structured object)
+- **Purpose**: Envisioned to log ownership chronology.
+- **Status**: Currently unused with no data, suggesting underdevelopment or incomplete integration.
 
-- `created_at`, `updated_at` 
+### Relationship Implications
 
-**Relations:**
+- **Client-Car Tie**: Enhances ownership tracking, beneficial for client relationship management and downstream services.
+- **Car-Intervention Connection**: Provides a detailed historical service account, critical for maintenance and operational analytics.
+- **Fuel Diversity**: Different fuel types necessitate diverse service and parts needs, affecting operational logistics and inventory.
+- **Historical Trends**: Engine sizes and car models by year can influence strategic decisions on inventory and marketing.
 
-- Linked to multiple `car` records (via `car.client_id`)
-
-- Linked to multiple `intervention` records (via `intervention.client`)
-
-- Linked to multiple `car_owner_history` records
-
----
-
-2. car
-Stores data about each vehicle, including its specifications and owner.
-
-**Key fields:**
-
-- `brand`, `model`, `year` 
-
-- `cc` (engine size), `fuel`, `oil_type`, `oil_quantity` 
-
-- `client_id` (current owner)
-
-- `created_at`, `updated_at` 
-
-**Relations:**
-
-- Belongs to one `client` 
-
-- Linked to multiple intervention records (via `intervention.car_id`)
-
-- Linked to `car_owner_history` entries
-
----
-
-3. intervention
-Logs each maintenance or repair operation performed on a car.
-
-**Key fields:**
-
-- `car_id`: target vehicle
-
-- `client`: the client who initiated or approved the work
-
-- `intervention_date`, mileage, price
-
-- `intervention_type`: flexible (structured `Maintenance` or string `Repair`)
-
-- `remark[]`: list of notes
-
-- `created_at`, updated_at
-
-**Relations:**
-
-- Belongs to one `car` 
-
-- Belongs to one `client` 
-
----
-
-4. car_owner_history
-Records past ownership links between cars and clients.
-
-**Key fields:**
-
-- `car`: the car reference
-
-- `client`: the owner at that time
-
-- `created_at`: timestamp of the ownership assignment
-
-**Purpose:**
-
-- Historical audit trail to track ownership changes over time
-
-- Complements **car.client_id**, which reflects only the current owner
-
-## 🔗 Relationships Summary
-
-![database relationships](./relations.png)
-
-## ⚙️ General Notes
-
-- All fields in all tables have full permissions.
-
-- Timestamps (`created_at`, `updated_at`) are automatically managed.
-
-- Flexible data structures are used for fields like `intervention_type` and `address`.
-
-- Full-text search indexes exist on key fields of `client` (e.g. name, email, phone).
+This documentation aims to provide intricate insights into the database's structure and relationships, essential for maintaining a robust system aligned with business strategies.
